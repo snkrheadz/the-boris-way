@@ -1,0 +1,7 @@
+{
+  "name": "eng",
+  "description": "Engineering workflow pack: commit/PR/review/merge, test-and-fix, refactor & simplify, techdebt, dataflow tracing, DB queries, project setup — plus code-architect/reviewer, verify, build, migration and cloud-advisor agents.",
+  "version": "0.1.0",
+  "author": { "name": "snkrheadz" },
+  "license": "MIT"
+}

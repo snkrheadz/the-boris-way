@@ -65,11 +65,33 @@ Core に入るもの（役割非依存）：
 /plugin install document-skills@anthropic-agent-skills
 ```
 
-#### エンジニア / マーケ / デザイナー
+#### エンジニア
 
-役割パックは順次追加予定（`eng` / `marketer` / `designer`）。現状はエンジニアは
-dotfiles 側のグローバル skill を、マーケ/デザイナーは公式 `frontend-design` /
-`document-skills` を併用してください。
+```
+/plugin install eng@claude-skills
+```
+
+eng に入るもの：
+
+- スキル(12): `quick-commit` `merge-pr` `pr-review` `review-changes` `review-inbox`
+  `test-and-fix` `refactor-swarm` `simplify-pipeline` `techdebt` `trace-dataflow`
+  `db-query` `project-setup`
+- エージェント(11): `code-architect` `architecture-reviewer` `code-simplifier`
+  `build-validator` `verify-app` `verify-shell` `migration-assistant` `oncall-guide`
+  `state-machine-diagram` `aws-best-practices-advisor` `gcp-best-practices-advisor`
+
+公式の開発系プラグインも併用推奨：
+
+```
+/plugin install gopls-lsp@claude-plugins-official        # Go
+/plugin install typescript-lsp@claude-plugins-official   # TS
+```
+
+#### マーケ / デザイナー
+
+役割パックは順次追加予定（`marketer` / `designer`）。現状は公式の
+`frontend-design` / `document-skills`、外部の各種スキルを併用してください。
+（research / designer 系エージェントは将来 `research` / `designer` パックへ分離予定）
 
 ---
 
