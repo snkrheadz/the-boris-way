@@ -39,6 +39,13 @@
       "description": "Design pack: nano-banana-pro-prompt-generator agent for image/visual prompts and slide storytelling. Pairs with frontend-design and document-skills (canvas-design, theme-factory, algorithmic-art).",
       "version": "0.1.0",
       "author": { "name": "snkrheadz" }
+    },
+    {
+      "name": "research",
+      "source": "./research",
+      "description": "Research pack: arxiv-ai-researcher, gemini-api-researcher and huggingface-spaces-researcher agents for AI/ML paper, API and model discovery. Role-agnostic; pairs with the marketer pack's strategic-research-analyst.",
+      "version": "0.1.0",
+      "author": { "name": "snkrheadz" }
     }
   ]
 }

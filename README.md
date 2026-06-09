@@ -87,6 +87,19 @@ eng に入るもの：
 /plugin install typescript-lsp@claude-plugins-official   # TS
 ```
 
+#### リサーチ（役割非依存・任意）
+
+AI/ML の論文・API・モデル調査を行う人向け。役割を問わず追加できます。
+
+```
+/plugin install research@claude-skills
+```
+
+research に入るエージェント(3): `arxiv-ai-researcher`（論文の発見と要約）
+`gemini-api-researcher`（Gemini API の機能と使い方）
+`huggingface-spaces-researcher`（HF Spaces / モデルの探索）。
+マーケターの `strategic-research-analyst`（marketer パック）と補完関係です。
+
 #### マーケター
 
 ```
@@ -171,7 +184,7 @@ curl -fsSL https://raw.githubusercontent.com/snkrheadz/claude-skills/main/shared
 
 ```
 claude-skills/
-├── .claude-plugin/marketplace.json   # カタログ（core, pm を公開）
+├── .claude-plugin/marketplace.json   # カタログ（core, pm, eng, marketer, designer, research）
 ├── core/                             # 役割非依存プラグイン
 │   ├── .claude-plugin/plugin.json
 │   ├── skills/                       # first-principles, teach-session, html-output, claude-code-guide
@@ -179,6 +192,10 @@ claude-skills/
 ├── pm/                               # PM 役割パック（自社資産）
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
+├── eng/                              # エンジニア役割パック（skills 12 + agents 11）
+├── marketer/                         # マーケター役割パック（strategic-research-analyst）
+├── designer/                         # デザイナー役割パック（nano-banana-pro-prompt-generator）
+├── research/                         # リサーチ（arxiv / gemini / huggingface researcher）
 └── shared/CLAUDE.md                  # 配布用の哲学（チャネルB）
 ```
 
