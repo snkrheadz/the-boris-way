@@ -21,53 +21,61 @@ on any machine-local shell function. It works in any repo, with any default bran
 /eng:create-pr "feat: add X"        # explicit title
 ```
 
-## Execution Flow
+## Execution
 
-Run these in order. **Stop and hand back to the user on any conflict or error** —
-never `gh pr create` against a base that failed to sync.
+What the flow does, in order:
 
-1. **Detect the base branch** (do NOT hardcode `main`):
-   ```bash
-   base=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null) \
-     || base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD | sed 's@^origin/@@') \
-     || base=main
-   echo "base = $base"
-   ```
+1. Detect the base branch (never hardcode `main`; handle empty `gh` output too).
+2. Guard: refuse if HEAD *is* the base branch.
+3. Fetch the base from origin.
+4. Guard: refuse if HEAD has **no commits ahead** of the fresh base.
+5. Rebase onto the fresh base — this is the fix for problem 1 (PR opened on a stale base).
+6. Push (`--force-with-lease`).
+7. Open the PR against the detected base, explicitly.
 
-2. **Guard**: refuse if the current branch *is* the base, or has no commits ahead:
-   ```bash
-   cur=$(git rev-parse --abbrev-ref HEAD)
-   [ "$cur" = "$base" ] && { echo "On base branch; nothing to PR."; exit 1; }
-   ```
+**Run the whole flow as a single Bash invocation.** The steps share shell variables
+(`base`, `cur`), and the Bash tool does **not** persist variables across separate calls —
+splitting the block would leave `$base`/`$cur` empty and run `git fetch origin ""`, etc.
+`set -e` makes a rebase conflict (step 5) abort the script with the rebase left in
+progress; that is the intended **stop-and-hand-back** behaviour.
 
-3. **Sync the base from origin**:
-   ```bash
-   git fetch origin "$base"
-   ```
+```bash
+set -euo pipefail
 
-4. **Rebase the current branch onto the fresh base** (linear history, current base).
-   On conflict, stop and let the user resolve — do not `--skip` or `--abort` silently:
-   ```bash
-   git rebase "origin/$base"
-   ```
+# 1. Detect base — fall back on empty output, not only on non-zero exit.
+base=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null) || true
+[ -n "${base:-}" ] || base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@') || true
+[ -n "${base:-}" ] || base=main
+cur=$(git rev-parse --abbrev-ref HEAD)
+echo "base=$base cur=$cur"
 
-5. **Push the branch** (force-with-lease is required after rebase; safe for a personal
-   worktree feature branch):
-   ```bash
-   git push --force-with-lease --set-upstream origin "$cur"
-   ```
+# 2. Guard: must not be on the base branch.
+if [ "$cur" = "$base" ]; then
+  echo "On base branch ($base); nothing to PR."; exit 1
+fi
 
-6. **Create the PR against the detected base explicitly** (never rely on the default):
-   ```bash
-   gh pr create --base "$base" --fill   # or --title/--body when you have them
-   ```
+# 3. Sync the base from origin.
+git fetch origin "$base"
+
+# 4. Guard: must have commits ahead of the freshly-fetched base.
+if [ "$(git rev-list --count "origin/$base..HEAD")" -eq 0 ]; then
+  echo "No commits ahead of origin/$base; nothing to PR."; exit 1
+fi
+
+# 5. Rebase onto the fresh base. On conflict, set -e aborts here with the rebase
+#    in progress: resolve, `git rebase --continue`, then run steps 6-7 manually.
+git rebase "origin/$base"
+
+# 6. Push. force-with-lease matters only if the branch was pushed before the
+#    rebase; it is harmless on a first push.
+git push --force-with-lease --set-upstream origin "$cur"
+
+# 7. Open the PR against the detected base explicitly (never rely on the default).
+gh pr create --base "$base" --fill   # or --title/--body when you have them
+```
 
 ## Notes
 
-- **Base is always detected, never assumed.** A repo on `master`/`develop` works without
-  changes.
-- The rebase in step 4 is the fix for problem 1 ("PR created without merging origin"):
-  the branch is brought up to the current base *before* the PR exists, so the diff and
-  mergeability are correct from the start.
+- **Base is always detected, never assumed** — a repo on `master`/`develop` works as-is.
 - Conflicts are a stop condition, not something to auto-resolve. Surface them and wait.
-- Pairs with `/eng:merge-pr`, which keeps local base current *after* the merge.
+- Pairs with `/eng:merge-pr`, which keeps the local base current *after* the merge.

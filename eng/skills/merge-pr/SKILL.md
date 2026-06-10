@@ -17,18 +17,20 @@ Execute PR merge and worktree cleanup in one command.
 
 ## Execution Flow
 
-0. **Detect the base branch** (do NOT hardcode `main`):
-   ```bash
-   base=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null) \
-     || base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD | sed 's@^origin/@@') \
-     || base=main
-   ```
 1. Get current worktree path and branch name
 2. Move to main repository
 3. Remove worktree: `git worktree remove <path>`
 4. Delete local branch: `git branch -D <branch>`
 5. Merge PR: `gh pr merge <num> --merge --delete-branch`
-6. Update local base so it isn't left stale: `git switch "$base" && git pull origin "$base"`
+6. Update the local base so it isn't left stale. Detect the base and pull **in one
+   Bash invocation** — the Bash tool does not persist variables across calls, so `base`
+   must be computed in the same block it is used:
+   ```bash
+   base=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null) || true
+   [ -n "${base:-}" ] || base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@') || true
+   [ -n "${base:-}" ] || base=main
+   git switch "$base" && git pull origin "$base"
+   ```
 
 ## Notes
 
