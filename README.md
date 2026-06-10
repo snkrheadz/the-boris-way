@@ -78,8 +78,8 @@ What Core ships (role-agnostic):
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (8): `create-pr` `merge-pr` `review-inbox` `test-and-fix` `refactor-swarm`
-  `techdebt` `trace-dataflow` `db-query`
+- Skills (8): `create-pr` `prune-redundant-skills` `review-inbox` `test-and-fix`
+  `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
 - Agents (8): `code-architect` `architecture-reviewer` `verify-shell`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
@@ -222,5 +222,8 @@ claude-skills/
   plugin in `marketplace.json` if needed → commit & push.
 - Before adding a skill, check [Covered by official Claude Code](#covered-by-official-claude-code) —
   don't duplicate a built-in command.
+- Periodically run `/eng:prune-redundant-skills` — the official surface keeps growing, so it
+  audits every skill against the current built-ins, removes the now-redundant ones, and fixes
+  the dependent files (README counts, `plugin.json`, `marketplace.json`, cross-skill links).
 - Consumers pull updates with `/plugin marketplace update claude-skills`.
 - License: MIT. The external `phuryn/pm-skills` is MIT too.

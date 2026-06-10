@@ -1,6 +1,6 @@
 {
   "name": "eng",
-  "description": "Engineering workflow pack (fills gaps the official commands don't cover): create-pr, merge-pr, review-inbox, test-and-fix, refactor-swarm, techdebt, trace-dataflow, db-query — plus code-architect, architecture-reviewer, verify-shell, migration, oncall and AWS/GCP advisor agents.",
+  "description": "Engineering workflow pack (fills gaps the official commands don't cover): create-pr, prune-redundant-skills, review-inbox, test-and-fix, refactor-swarm, techdebt, trace-dataflow, db-query — plus code-architect, architecture-reviewer, verify-shell, migration, oncall and AWS/GCP advisor agents.",
   "version": "0.2.0",
   "author": { "name": "snkrheadz" },
   "license": "MIT"

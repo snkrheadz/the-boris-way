@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: "Sync the base branch from origin, rebase the current branch onto it, then open a PR against the correct base. Prevents PRs created on a stale base from a git worktree. Triggers: /eng:create-pr, create PR, open pull request, gh pr create"
+description: "Sync the base branch from origin, merge it into the current branch, then open a PR against the correct base. Prevents PRs created on a stale base from a git worktree. Triggers: /eng:create-pr, create PR, open pull request, gh pr create"
 user-invocable: true
 allowed-tools: Bash
 ---
@@ -29,14 +29,15 @@ What the flow does, in order:
 2. Guard: refuse if HEAD *is* the base branch.
 3. Fetch the base from origin.
 4. Guard: refuse if HEAD has **no commits ahead** of the fresh base.
-5. Rebase onto the fresh base — this is the fix for problem 1 (PR opened on a stale base).
-6. Push (`--force-with-lease`).
+5. Merge the fresh base into the current branch — this is the fix for problem 1
+   (PR opened on a stale base). Merge preserves history, so no force-push is needed.
+6. Push (plain `--set-upstream`; no force needed).
 7. Open the PR against the detected base, explicitly.
 
 **Run the whole flow as a single Bash invocation.** The steps share shell variables
 (`base`, `cur`), and the Bash tool does **not** persist variables across separate calls —
 splitting the block would leave `$base`/`$cur` empty and run `git fetch origin ""`, etc.
-`set -e` makes a rebase conflict (step 5) abort the script with the rebase left in
+`set -e` makes a merge conflict (step 5) abort the script with the merge left in
 progress; that is the intended **stop-and-hand-back** behaviour.
 
 ```bash
@@ -62,13 +63,13 @@ if [ "$(git rev-list --count "origin/$base..HEAD")" -eq 0 ]; then
   echo "No commits ahead of origin/$base; nothing to PR."; exit 1
 fi
 
-# 5. Rebase onto the fresh base. On conflict, set -e aborts here with the rebase
-#    in progress: resolve, `git rebase --continue`, then run steps 6-7 manually.
-git rebase "origin/$base"
+# 5. Merge the fresh base into the current branch. On conflict, set -e aborts here
+#    with the merge in progress: resolve, `git commit` (or `git merge --continue`),
+#    then run steps 6-7 manually.
+git merge --no-edit "origin/$base"
 
-# 6. Push. force-with-lease matters only if the branch was pushed before the
-#    rebase; it is harmless on a first push.
-git push --force-with-lease --set-upstream origin "$cur"
+# 6. Push. No force needed — merge only adds commits, never rewrites history.
+git push --set-upstream origin "$cur"
 
 # 7. Open the PR against the detected base explicitly (never rely on the default).
 gh pr create --base "$base" --fill   # or --title/--body when you have them
@@ -77,5 +78,8 @@ gh pr create --base "$base" --fill   # or --title/--body when you have them
 ## Notes
 
 - **Base is always detected, never assumed** — a repo on `master`/`develop` works as-is.
+- **Merge, not rebase** — the current branch keeps its commit history and gains a merge
+  commit from origin's base, so no `--force-with-lease` is ever required.
 - Conflicts are a stop condition, not something to auto-resolve. Surface them and wait.
-- Pairs with `/eng:merge-pr`, which keeps the local base current *after* the merge.
+- After the PR merges, clean up with `gh pr merge <n> --merge --delete-branch` then the
+  official `/clean_gone` command (removes the now-`[gone]` local branch and its worktree).
