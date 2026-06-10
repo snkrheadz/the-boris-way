@@ -78,8 +78,8 @@ What Core ships (role-agnostic):
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (7): `merge-pr` `review-inbox` `test-and-fix` `refactor-swarm` `techdebt`
-  `trace-dataflow` `db-query`
+- Skills (8): `create-pr` `merge-pr` `review-inbox` `test-and-fix` `refactor-swarm`
+  `techdebt` `trace-dataflow` `db-query`
 - Agents (8): `code-architect` `architecture-reviewer` `verify-shell`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
@@ -211,7 +211,7 @@ claude-skills/
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
-├── eng/                              # engineering pack (skills 7 + agents 8)
+├── eng/                              # engineering pack (skills 8 + agents 8)
 ├── research/                         # research pack (arxiv / gemini / huggingface)
 └── shared/CLAUDE.md                  # philosophy for distribution (Channel B)
 ```
