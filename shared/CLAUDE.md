@@ -36,6 +36,18 @@ Escalate only as far as the work demands; the difference is who holds the plan.
 **Rule:** plan fits in 2–3 steps → subagent or skill; coordinated multi-role → Team;
 wide fan-out + verify/synthesize → Workflow.
 
+### Model routing
+- Pin `model:` explicitly when delegating — subagents inherit the main-session model
+  otherwise, and on a Fable 5 session an untagged delegation buys top-tier reasoning
+  (at top-tier cost) for work that doesn't need it.
+- **Security work routes to Opus 4.8.** Security audits, red-teaming, and
+  exploit-reproduction debugging can trip Fable 5's safety classifiers
+  (`stop_reason: refusal`) even when benign — run them on Opus 4.8 (switch the main
+  session, or a `model: "opus"` subagent).
+- **Dispatch async, don't block.** Fire independent subtasks in the background and
+  keep working; reuse a long-lived agent instead of respawning — context carries
+  over and cache reads stay warm.
+
 
 ## 3. Self-improvement & memory
 - **User correction → a project `tasks/lessons.md`** (record the pattern *and the why*).
@@ -51,6 +63,9 @@ behave?"*
   baseline when relevant.
 - **Autonomous runs need an end-to-end check that self-terminates honestly.** If none
   exists, build it first — an unattended loop with no verification path is not safe to run.
+- **Ground progress claims in evidence.** On long runs, audit each claim against a
+  tool result from the session before reporting — only report work you can point to
+  evidence for; if something is unverified, say so explicitly.
 - Define your **project's closing gate** explicitly: whatever proves a change works
   end-to-end (the real build passes, the app runs, the tests are green) — and run it
   before calling work done.

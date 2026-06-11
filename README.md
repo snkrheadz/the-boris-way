@@ -216,6 +216,32 @@ claude-skills/
 └── shared/CLAUDE.md                  # philosophy for distribution (Channel B)
 ```
 
+## Authoring conventions
+
+### Every skill/agent declares an explicit `model:` pin
+
+Cost and behavior stay invariant whether the main session runs **Fable 5** or
+**Opus 4.8** — an unpinned skill/agent inherits the main-session model, which on a
+Fable 5 session silently buys top-tier reasoning (at top-tier cost) for work that
+doesn't need it. Pick the cheapest model that does the job: `haiku` for lookups and
+mechanical checks, `sonnet` for normal procedures, `opus` only where judgment matters.
+
+### Instruction density follows the model pin
+
+The `model:` pin also decides how detailed the instructions should be
+(per Anthropic's [Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5) guide):
+
+- **Pinned to `sonnet` / `haiku`** — detailed step-by-step procedures are an asset.
+  These models still benefit from explicit steps; keep them.
+- **Runs on the main-session model** (no pin, or the orchestrating part of a fan-out
+  skill like `refactor-swarm`) — write constraints, boundaries, and verification
+  gates only. Skip procedural micro-steps: frontier models produce *worse* output
+  when over-instructed.
+- **Never instruct a skill/agent to echo or transcribe its internal reasoning** — on
+  Fable 5 this can trigger `reasoning_extraction` refusals
+  (`stop_reason: refusal`). If visibility is needed, report *evidence from tool
+  results* instead of thought processes.
+
 ## Maintenance
 
 - Add a skill → drop `skills/<name>/SKILL.md` into the right plugin, register a new
