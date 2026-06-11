@@ -246,6 +246,11 @@ The `model:` pin also decides how detailed the instructions should be
 
 - Add a skill → drop `skills/<name>/SKILL.md` into the right plugin, register a new
   plugin in `marketplace.json` if needed → commit & push.
+- **Bump the pack version on every content change** — in *both* the pack's
+  `plugin.json` and its `marketplace.json` entry (they must agree;
+  `claude plugin validate .` checks this). Installed caches are keyed by version:
+  without a bump, consumers' `/plugin marketplace update` refreshes the catalog but
+  never re-materializes the pack, so they keep serving the old skills indefinitely.
 - Before adding a skill, check [Covered by official Claude Code](#covered-by-official-claude-code) —
   don't duplicate a built-in command.
 - Periodically run `/eng:prune-redundant-skills` — the official surface keeps growing, so it

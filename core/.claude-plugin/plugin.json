@@ -1,7 +1,9 @@
 {
   "name": "core",
   "description": "Cross-role foundation: first-principles thinking, teaching/onboarding, rich HTML output, and a sensitive-file guard hook. Role-agnostic — install first.",
-  "version": "0.1.0",
-  "author": { "name": "snkrheadz" },
+  "version": "0.2.0",
+  "author": {
+    "name": "snkrheadz"
+  },
   "license": "MIT"
 }
