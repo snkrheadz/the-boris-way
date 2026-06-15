@@ -45,6 +45,9 @@ philosophy) through a plugin, so those go through a separate channel.
 What Core ships (role-agnostic):
 
 - `first-principles` — rethink a problem from fundamentals
+- `honest-reasoning` — answer a high-stakes question with per-claim confidence labels, a steelman counter-case, and a weakest-link self-critique
+- `deep-thinking` — crack a problem too complex for one pass: decompose, solve each part, integrate, check the seams
+- `life-decision` — think through a big personal decision under Helpful/Honest/Harmless principles
 - `teach-session` — teach back the work just done (great for onboarding)
 - `html-output` — emit specs / reviews / reports as rich HTML
 - `pre-tool-guard` hook — block access to sensitive files (defense in depth)
@@ -102,6 +105,20 @@ For anyone investigating AI/ML papers, APIs, and models — any role can add it.
 Agents (3): `arxiv-ai-researcher` (paper discovery & synthesis),
 `gemini-api-researcher` (Gemini API capabilities & usage),
 `huggingface-spaces-researcher` (HF Spaces / model discovery).
+
+#### Strategy (role-agnostic, optional)
+
+For anyone planning around the AI-driven shift in work — any role can add it.
+
+```
+/plugin install strategy@claude-skills
+```
+
+Skills (3): `career-ai-scan` (audit your role's AI exposure → survivability score + 90-day
+plan), `industry-ai-map` (map your industry's transformation in three confidence-tagged
+waves), `ai-opportunity-scan` (find where your expertise × AI opens opportunity, with
+30-day experiments). All three stay honest about uncertainty — they produce scenarios to
+plan against, not forecasts.
 
 #### Marketer / Designer
 
@@ -203,16 +220,18 @@ Now everyone is "same environment, immediately."
 
 ```
 claude-skills/
-├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research)
+├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy)
 ├── core/                             # role-agnostic plugin
 │   ├── .claude-plugin/plugin.json
-│   ├── skills/                       # first-principles, teach-session, html-output
+│   ├── skills/                       # first-principles, honest-reasoning, deep-thinking,
+│   │                                 #   life-decision, teach-session, html-output
 │   └── hooks/                        # pre-tool-guard.sh + hooks.json
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
 ├── eng/                              # engineering pack (skills 8 + agents 8)
 ├── research/                         # research pack (arxiv / gemini / huggingface)
+├── strategy/                         # AI-era personal strategy (career / industry / opportunity)
 └── shared/CLAUDE.md                  # philosophy for distribution (Channel B)
 ```
 

@@ -8,8 +8,8 @@
     {
       "name": "core",
       "source": "./core",
-      "description": "Cross-role foundation for everyone: first-principles thinking, teaching/onboarding, rich HTML output, and a sensitive-file guard hook. Install this first, whatever your role.",
-      "version": "0.2.0",
+      "description": "Cross-role foundation for everyone: first-principles + honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, rich HTML output, and a sensitive-file guard hook. Install this first, whatever your role.",
+      "version": "0.3.0",
       "author": {
         "name": "snkrheadz"
       }
@@ -36,6 +36,15 @@
       "name": "research",
       "source": "./research",
       "description": "Research pack: arxiv-ai-researcher, gemini-api-researcher and huggingface-spaces-researcher agents for AI/ML paper, API and model discovery. Role-agnostic — for anyone investigating AI/ML papers, APIs and models.",
+      "version": "0.1.0",
+      "author": {
+        "name": "snkrheadz"
+      }
+    },
+    {
+      "name": "strategy",
+      "source": "./strategy",
+      "description": "Personal strategy for the AI-driven shift in work: audit your role's AI exposure (career-ai-scan), map your industry's transformation (industry-ai-map), and find where your expertise x AI opens opportunity (ai-opportunity-scan). Role-agnostic, honest about uncertainty.",
       "version": "0.1.0",
       "author": {
         "name": "snkrheadz"
