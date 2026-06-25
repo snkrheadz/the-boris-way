@@ -49,6 +49,15 @@
       "author": {
         "name": "snkrheadz"
       }
+    },
+    {
+      "name": "writing",
+      "source": "./writing",
+      "description": "Writing pack: strip AI tells from drafts before publishing. stop-ai-slop-jp (Japanese) and stop-ai-slop-en (English) catch predictable AI phrasing, false agency, propositional headings, uniform rhythm, and symbol artifacts. Role-agnostic. Derived from hardikpandya/stop-slop and iKora128/stop-ai-slop-jp (MIT).",
+      "version": "0.1.0",
+      "author": {
+        "name": "snkrheadz"
+      }
     }
   ]
 }

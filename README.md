@@ -120,6 +120,22 @@ waves), `ai-opportunity-scan` (find where your expertise × AI opens opportunity
 30-day experiments). All three stay honest about uncertainty — they produce scenarios to
 plan against, not forecasts.
 
+#### Writing (role-agnostic, optional)
+
+For anyone who drafts with AI and wants it to read like a human wrote it — any role can add it.
+
+```
+/plugin install writing@claude-skills
+```
+
+Skills (2): `stop-ai-slop-jp` (Japanese) and `stop-ai-slop-en` (English) review a draft and
+strip AI tells before you publish — not just em dashes and pet phrases, but the deeper ones:
+absent author/false agency, propositional headings, over-inflation, both-sides hedging, and
+metronomic rhythm. Each ships banned-phrase lists, structural anti-patterns, and before/after
+examples. Derived from [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)
+(Hardik Pandya) and [iKora128/stop-ai-slop-jp](https://github.com/iKora128/stop-ai-slop-jp)
+(Daichi Nagashima); both MIT.
+
 #### Marketer / Designer
 
 These roles are served almost entirely by **official Anthropic plugins** — we no longer
