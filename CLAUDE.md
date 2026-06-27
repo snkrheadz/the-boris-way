@@ -1,12 +1,8 @@
 # claude-skills — maintainer's map
 
-This is the auto-loaded context for **working *on* this repo**. It is not the
-philosophy this repo *distributes* — that lives in `shared/CLAUDE.md` (Channel B,
-copied to a consumer's `~/.claude/CLAUDE.md`). Keep the two separate: this file maps
-the marketplace; `shared/CLAUDE.md` carries the workflow philosophy.
-
-The full install/authoring story is in `README.md` — this file only supplies what a
-maintainer needs auto, and points to the README for the rest. Don't duplicate it here.
+Maintainer context for **working *on* this repo**. `shared/CLAUDE.md` carries the
+distributed workflow philosophy (Channel B → consumer's `~/.claude/CLAUDE.md`).
+Authoring details live in `README.md`; this file only carries what's needed every session.
 
 ## Overview
 
@@ -51,8 +47,8 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 - **Bump the version in BOTH** the pack's `plugin.json` and its `marketplace.json`
   entry on every content change. Installed caches are keyed by version; disagree and
   consumers serve stale skills forever. `validate.sh` fails a mismatch.
-- **Don't duplicate an official command.** The built-in surface keeps growing; run
-  `/eng:prune-redundant-skills` periodically to catch drift.
+- **Built-in surface keeps growing** — run `/eng:prune-redundant-skills` periodically
+  to catch drift before shipping a skill that duplicates a new native command.
 
 ## Adding a skill
 
@@ -60,7 +56,7 @@ Use `/eng:new-skill <pack> <name>` — it scaffolds `SKILL.md` with a compliant
 frontmatter, bumps both versions, and reminds you to update the README list. Then run
 the closing gate.
 
-## Closing gate
+## Closing gate (run before every PR)
 
-`bash scripts/validate.sh` must pass before calling work done. "Done" here means the
-catalog still installs and every skill stays selectable — not just that an edit saved.
+`bash scripts/validate.sh` — "done" means the catalog installs and every skill stays
+selectable, not just that an edit saved.
