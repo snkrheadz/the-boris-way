@@ -1,6 +1,6 @@
 ---
 name: refactor-swarm
-description: "Parallel refactoring with Agent Teams. Partition by module, avoid conflicts"
+description: "Parallel refactoring with Agent Teams. Partition by module, avoid conflicts. Triggers: /eng:refactor-swarm, parallel refactor, refactor swarm, refactor by module, multi-agent refactor"
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Bash, Edit
 model: sonnet

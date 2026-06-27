@@ -1,5 +1,9 @@
 ---
-description: "Data flow tracing. Visualize UI → compute → render chain before fixing bugs. Triggers: trace, dataflow, flow, debug flow"
+name: trace-dataflow
+description: "Data flow tracing. Visualize UI → compute → render chain before fixing bugs. Triggers: /eng:trace-dataflow, trace, dataflow, flow, debug flow"
+user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
 ---
 
 # Data Flow Trace

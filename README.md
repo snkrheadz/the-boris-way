@@ -81,8 +81,8 @@ What Core ships (role-agnostic):
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (8): `create-pr` `prune-redundant-skills` `review-inbox` `test-and-fix`
-  `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
+- Skills (9): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
+  `test-and-fix` `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
 - Agents (8): `code-architect` `architecture-reviewer` `verify-shell`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
@@ -237,6 +237,8 @@ Now everyone is "same environment, immediately."
 ```
 claude-skills/
 ├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy)
+├── CLAUDE.md                         # maintainer's map (auto-loaded when working ON this repo)
+├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
 ├── core/                             # role-agnostic plugin
 │   ├── .claude-plugin/plugin.json
 │   ├── skills/                       # first-principles, honest-reasoning, deep-thinking,
@@ -245,11 +247,14 @@ claude-skills/
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
-├── eng/                              # engineering pack (skills 8 + agents 8)
+├── eng/                              # engineering pack (skills 9 + agents 8)
 ├── research/                         # research pack (arxiv / gemini / huggingface)
 ├── strategy/                         # AI-era personal strategy (career / industry / opportunity)
 └── shared/CLAUDE.md                  # philosophy for distribution (Channel B)
 ```
+
+> `CLAUDE.md` (maintainer's map for this repo) and `shared/CLAUDE.md` (the philosophy
+> distributed to consumers) are deliberately different files — don't merge them.
 
 ## Authoring conventions
 
@@ -279,8 +284,14 @@ The `model:` pin also decides how detailed the instructions should be
 
 ## Maintenance
 
-- Add a skill → drop `skills/<name>/SKILL.md` into the right plugin, register a new
-  plugin in `marketplace.json` if needed → commit & push.
+- Add a skill → run `/eng:new-skill <pack> <name>` (scaffolds a convention-compliant
+  `SKILL.md`, bumps both versions, updates this README), or do it by hand: drop
+  `skills/<name>/SKILL.md` into the right plugin, register a new plugin in
+  `marketplace.json` if needed → commit & push.
+- Run the closing gate before pushing: `bash scripts/validate.sh` (JSON validity,
+  `plugin.json`↔`marketplace.json` version agreement, and every skill's frontmatter —
+  `name`, a `Triggers:` description, a `model:` pin). It also runs
+  `claude plugin validate .`.
 - **Bump the pack version on every content change** — in *both* the pack's
   `plugin.json` and its `marketplace.json` entry (they must agree;
   `claude plugin validate .` checks this). Installed caches are keyed by version:
