@@ -11,9 +11,9 @@ This phase encodes the single lesson from Spotify's Honk: **verification is the 
 
 Target: $ARGUMENTS  （空なら `.` = カレントリポジトリ）
 
-> Scoring basis: the portable rubric in `rubric.md` (this skill's directory) — the Honk
-> gate + the three pillars. It is the carry-anywhere definition of the steps below; keep
-> the two in sync if you adjust the criteria.
+> Scoring basis: the portable rubric in `rubric.md` (this skill's directory) defines the
+> Honk gate and the three pillars — the single, carry-anywhere source for the criteria the
+> steps below apply. Adjust the criteria there, not here.
 
 ## Steps
 
@@ -24,11 +24,8 @@ Target: $ARGUMENTS  （空なら `.` = カレントリポジトリ）
    - type-check (`tsc --noEmit`, `mypy`, `go vet`)
    - build (`make`, `npm run build`, `cargo build`)
    - CI definition (`.github/workflows/*`, etc.) — does CI run the same commands a local agent could?
-   - **If NO agent-invokable verify command exists at all → the repo is `agent-not-ready`.** This is an automatic Blocker and the #1 backlog item, regardless of every other axis.
-3. **Score the three pillars.** Use `codegraph_explore` (not raw file reads) to survey structure and consistency — it is the pre-built index, far cheaper than a grep/read loop.
-   - **Pillar A — テストの自動化:** tests present? coverage holes on critical paths? flaky/skipped/`xfail`? Can tests actually run from a clean checkout?
-   - **Pillar B — 検証の仕組み (closed-loop):** can an agent run verify end-to-end unattended? gap between "what CI does" and "what an agent can do locally"? missing the loop = the most expensive gap (per Honk).
-   - **Pillar C — 標準化・一貫性:** naming / layering / pattern variance. Divergent idioms make agents guess; consistency is what made Claude work in Spotify's 20M-line monorepo. Cite concrete divergences from `codegraph`, not vibes.
+   - Then **apply the Honk gate as defined in `rubric.md`**: if no agent-invokable verify command exists at all, the verdict is fixed before any scoring (the rubric states the exact rule and its consequence).
+3. **Score the three pillars (A / B / C), each 0–5, per the definitions in `rubric.md`.** Use `codegraph_explore` (not raw file reads) to survey structure and consistency — it is the pre-built index, far cheaper than a grep/read loop. Score against the rubric's criteria; do not redefine them here.
 4. **Rank the backlog by ROI.** For each gap, estimate `impact` (how much it unblocks autonomous/agent work) and `effort`, and sort by impact/effort. The verify-loop gap, if present, dominates.
 5. **Write `specs/<YYYY-MM-DD>-scan/scan.md`** in the format below. Use today's date; create the directory.
 6. **Stop at the gate.** Print the scorecard, the agent-ready verdict, and the exact next command for the top intent. Do not start requirements yourself.
@@ -75,11 +72,10 @@ agent_ready: <yes | no>   # no if Pillar B has no agent-invokable verify loop
 
 ## Rules
 
-- **Honk gate is non-negotiable.** No agent-invokable verify loop (Pillar B) → `agent_ready: no`, and the loop becomes backlog item #1 with the highest ROI. A repo that agents cannot verify themselves is not ready, no matter how good its tests look on paper.
+- **The Honk gate and the scoring criteria live in `rubric.md` — apply them, don't restate them.** That file is the single source; the gate (no agent-invokable verify loop → `agent_ready: no`, backlog #1) and the three pillars are defined there. If the criteria change, change them there.
 - **Observe, don't guess.** Every score must cite something you actually ran or read via `codegraph` (a command's output, a concrete naming divergence). "Feels inconsistent" is not a finding.
 - **Intents stay at intent altitude.** Each backlog row is a one-line problem statement — no file paths, no design, no tech choices. Those belong to `/spec:requirement` and downstream.
 - **Scan only.** Do not fix anything, do not write requirement.md. This phase produces `scan.md` and a ranked list of intents — nothing else.
-- This rubric is portable: the three pillars + the Honk gate are repo-agnostic, so the same `/spec:scan` reproduces Spotify's discipline on any repository without any fleet infrastructure.
 
 When done, end with exactly:
 

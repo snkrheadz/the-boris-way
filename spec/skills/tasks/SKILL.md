@@ -43,7 +43,7 @@ status: ready
 
 ## Rules
 
-- **One task = one verifiable increment.** If a task has no concrete 検証 line, split it until it does (公理5).
+- **One task = one verifiable increment.** If a task has no concrete 検証 line, split it until it does (公理5: 各タスクが自分の検証を持つまで分割する).
 - Order so each task leaves the tree green. No "big bang" tasks that only verify at the end.
 - Do not exceed the design — if a task needs something not in `design.md`, stop and flag it back to Gate ②; don't quietly redesign here.
 
