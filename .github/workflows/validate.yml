@@ -1,0 +1,22 @@
+name: validate
+
+# The closing gate, enforced. scripts/validate.sh is the agent-invokable verify
+# loop; running it here makes "catalog installs & skills selectable" a required
+# check on every PR instead of relying on a human to run it locally.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure jq is available
+        run: jq --version
+      - name: Run the marketplace gate
+        # The claude CLI is absent on CI; validate.sh notes-and-skips its
+        # authoritative check rather than failing, so the JSON / version /
+        # frontmatter / cross-reference checks still gate every PR.
+        run: bash scripts/validate.sh

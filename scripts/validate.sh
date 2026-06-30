@@ -14,7 +14,9 @@
 #   4. Each skills/<name>/SKILL.md has frontmatter whose `name:` matches its
 #      directory, carries a `description:` containing "Triggers:", and pins a
 #      `model:` (warn-only — an intentional main-session skill may omit it).
-#   5. `claude plugin validate .` if the CLI is available (authoritative).
+#   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
+#      skill (external-marketplace refs are skipped).
+#   6. `claude plugin validate .` if the CLI is available (authoritative).
 #
 # Usage: bash scripts/validate.sh   (run from the repo root)
 
@@ -91,7 +93,35 @@ while IFS=$'\t' read -r pack source mp_version; do
   ok "pack '$pack': skills frontmatter checked"
 done < <(jq -r '.plugins[] | [.name, .source, .version] | @tsv' "$marketplace")
 
-# --- 5. authoritative CLI check (optional) ----------------------------------
+# --- 5. cross-reference integrity -------------------------------------------
+# Descriptions name sibling skills as "For X use /pack:name instead" — the
+# boundary that keeps auto-selection unambiguous. A reference into a LOCAL pack
+# must resolve to a real skill; refs into external marketplaces (e.g.
+# /claude-md-management:*) are out of our control and skipped.
+local_packs="$(jq -r '.plugins[].name' "$marketplace")"
+valid_refs="$(
+  while IFS=$'\t' read -r p src; do
+    d="${src#./}"
+    [ -d "$d/skills" ] || continue
+    for s in "$d"/skills/*/; do
+      [ -d "$s" ] || continue
+      printf '%s:%s\n' "$p" "$(basename "$s")"
+    done
+  done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
+)"
+xref_fail=0
+while read -r ref; do
+  [ -n "$ref" ] || continue
+  pack="${ref%%:*}"
+  printf '%s\n' "$local_packs" | grep -qx "$pack" || continue  # external pack — skip
+  if ! printf '%s\n' "$valid_refs" | grep -qx "$ref"; then
+    err "dangling cross-reference '/$ref' (no such skill in local pack '$pack')"
+    xref_fail=1
+  fi
+done < <(grep -rhoE '/[a-z][a-z0-9-]*:[a-z][a-z0-9-]+' --include=SKILL.md . | sed 's#^/##' | sort -u)
+[ "$xref_fail" -eq 0 ] && ok "cross-references resolve (local packs)"
+
+# --- 6. authoritative CLI check (optional) ----------------------------------
 if command -v claude >/dev/null 2>&1; then
   if claude plugin validate . >/dev/null 2>&1; then
     ok "claude plugin validate ."

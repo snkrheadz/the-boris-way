@@ -2,6 +2,8 @@
 name: scan
 description: "Scan a repository for agent-readiness (test automation / closed-loop verification / consistency) and emit an ROI-ranked backlog of spec intents — the front gate of the spec pipeline. Triggers: /spec:scan, scan repo, agent readiness, spec scan, repo audit"
 user-invocable: true
+allowed-tools: Read, Write, Bash, Grep, Glob
+model: opus
 ---
 
 

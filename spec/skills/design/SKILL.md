@@ -2,6 +2,8 @@
 name: design
 description: "Turn an approved requirement.md into a design.md (DDD / clean architecture / service boundaries), then stop at the human gate. Triggers: /spec:design, write design, spec design, architecture design, design.md"
 user-invocable: true
+allowed-tools: Read, Write, Bash, Grep, Glob
+model: opus
 ---
 
 

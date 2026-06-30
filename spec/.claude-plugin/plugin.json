@@ -1,7 +1,7 @@
 {
   "name": "spec",
   "description": "Spec-driven development pipeline (the Boris way): scan a repo for agent-readiness, then take a change from a one-line intent to a mergeable PR through human-gated phases — requirement (EARS) → design (DDD/clean-arch) → tasks (each independently verifiable) → implement (with notes) → review (isolated-context adversarial). Self-contained: bundles the implement phase and the audit rubric. Verification-first, one phase per command, stops at every gate.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "snkrheadz"
   },

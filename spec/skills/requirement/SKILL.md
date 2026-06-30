@@ -2,6 +2,8 @@
 name: requirement
 description: "Turn a one-line intent into a reviewable requirement.md (EARS acceptance criteria), then stop at the human gate. Triggers: /spec:requirement, write requirement, spec requirement, EARS, requirement.md"
 user-invocable: true
+allowed-tools: Read, Write, Bash, Grep, Glob
+model: sonnet
 ---
 
 

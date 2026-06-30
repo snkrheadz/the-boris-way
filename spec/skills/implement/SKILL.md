@@ -2,6 +2,8 @@
 name: implement
 description: "Implement a spec's tasks while keeping running implementation notes (decisions, tradeoffs, deltas from the spec). Triggers: /spec:implement, implement spec, implement tasks, implement with notes"
 user-invocable: true
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
+model: opus
 ---
 
 

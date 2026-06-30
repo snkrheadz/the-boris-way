@@ -2,6 +2,8 @@
 name: tasks
 description: "Break an approved design.md into an ordered, independently-verifiable tasks.md (the implementation contract). Triggers: /spec:tasks, break into tasks, spec tasks, task breakdown, tasks.md"
 user-invocable: true
+allowed-tools: Read, Write, Bash, Grep, Glob
+model: sonnet
 ---
 
 
