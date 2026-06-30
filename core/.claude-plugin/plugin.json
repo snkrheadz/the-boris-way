@@ -1,7 +1,7 @@
 {
   "name": "core",
   "description": "Cross-role foundation: first-principles, honest-reasoning, deep-thinking and life-decision thinking aids, teaching/onboarding, rich HTML output, a CLAUDE.md tuner (Boris-way), and a sensitive-file guard hook. Role-agnostic — install first.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": {
     "name": "snkrheadz"
   },

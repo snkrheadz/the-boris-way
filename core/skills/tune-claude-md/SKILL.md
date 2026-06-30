@@ -60,11 +60,18 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
    only sometimes relevant, it doesn't belong in always-loaded CLAUDE.md — move a
    repeated procedure to a slash command (`.claude/commands/<name>.md`) and a specific
    file's detail to an `@`-mention at point of use. Keep CLAUDE.md lean.
-3. **4-channel routing.** Confirm each surviving piece is on the right channel:
-   - persistent knowledge / file map / commands → **CLAUDE.md** (auto)
-   - repeated procedures → **slash command** (on-demand)
-   - specific files/dirs → **`@`-mention** (lazy)
-   - in-session learnings → **`#`** (grown over time)
+3. **4-channel routing.** Route each surviving block by what it *is*, not where it sits
+   today. The channel splits further than "command vs `@`":
+
+   ```
+   always needed every session?            → CLAUDE.md (auto)
+   a procedure Claude executes (steps)?
+     ├─ needs fan-out / multi-agent         → .claude/agents/<name>.md
+     ├─ reusable in-context, no external dep → .claude/skills/<name>/SKILL.md
+     └─ otherwise                           → .claude/commands/<name>.md  (/project:<name>)
+   reference knowledge (facts, not steps)   → .claude/context/<topic>.md  (@-mention, lazy)
+   learning that grows in-session           → tasks/lessons.md via #
+   ```
 4. **reasons, not generalities.** A convention stays only if it carries its *reason*
    ("why we do it this way here"). A generic best practice with no repo-specific reason
    is a rule — cut or rewrite it with the why.
@@ -74,19 +81,52 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
    personal/absolute-path/machine-specific notes belong in `CLAUDE.local.md`. Move
    anything that's in the wrong file.
 
-## Stage 3 — Apply & verify
+## Stage 3 — Distill, apply & verify
 
 1. Present the change as a **diff with rationale** before writing — for each removal,
    name *why* ("model already knows this" / "moved to on-demand" / "no repo-specific
    reason"). Let the user confirm direction before you edit (explore → plan → confirm →
    implement).
-2. Apply with `Edit`/`Write`.
+2. **Apply, and actually create the move targets.** A block "moved off CLAUDE.md" is only
+   half done until its destination file exists — otherwise you've deleted context, not
+   re-routed it:
+
+   | moved block | create |
+   |---|---|
+   | repeated procedure | `.claude/commands/<name>.md` (kebab-case) → `/project:<name>` |
+   | reusable in-context procedure | `.claude/skills/<name>/SKILL.md` |
+   | fan-out / multi-agent procedure | `.claude/agents/<name>.md` |
+   | reference detail | `.claude/context/<topic>.md` — first line a `<!-- read when: … -->` comment |
+
    - **Pruning is archival, not destruction**, especially in any unattended/loop run:
      move removed-but-maybe-useful blocks to a `CLAUDE.archive.md` (or a clearly marked
-     trailing section) rather than deleting outright — this prevents lossy edits when no
-     human is watching.
-3. Re-run the rubric pass (Stage 1) if available to confirm the score held or improved
-   after pruning. A leaner file should not score worse; if it does, surface the tension.
+     trailing section) rather than deleting outright.
+3. **Make the new artifacts discoverable from CLAUDE.md.** Add or refresh a routing table
+   so the model knows what exists *and when to load it* — an `@`-path with no load trigger
+   never gets read at the moment it's needed (writing time is the most dangerous gap to
+   miss):
+
+   ```markdown
+   ## Context (`@` on-demand)
+   | `@` path | read when |
+   |---|---|
+   | `@.claude/context/<topic>.md` | <trigger> |
+
+   ## Commands / Skills
+   | name | trigger |
+   |---|---|
+   | `/project:<name>` | <when> |
+   ```
+
+4. **Verify integrity before reporting:**
+   - every `@.claude/...` reference in CLAUDE.md (and inside the context files) resolves
+     to a file that exists; no other doc (README, etc.) links a section you just cut.
+   - any existing artifact you now route *into* isn't **stale** — paths or var-names
+     carried over from another repo. Flag conservatively: annotate `⚠️ not usable in this
+     repo` rather than delete. A full `.claude/` staleness sweep is
+     `/eng:prune-redundant-skills`' job, not this skill's — don't widen scope into it.
+   - re-run the rubric pass (Stage 1) if available; a leaner file should not score worse.
+     If it does, surface the tension.
 
 ## Stage 4 — Report
 
@@ -108,6 +148,13 @@ Size:  <before> → <after> lines
 
 ### Re-placed (self vs team)
 - "<note>" → CLAUDE.local.md (machine-specific)
+
+### Created (new artifacts, now discoverable from CLAUDE.md)
+- `.claude/commands/<name>.md` → `/project:<name>`
+- `.claude/context/<topic>.md` → `@`-referenced with a load trigger
+
+### Reference integrity
+- ✅ all `@`-mentions in CLAUDE.md resolve   ⚠️ <stale artifact flagged, not deleted>
 
 ### Kept (earns its keep: facts / map / reasoned conventions)
 - ...

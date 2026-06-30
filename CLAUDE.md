@@ -14,8 +14,9 @@ don't ship it (see README → *Covered by official Claude Code*).
 ## Commands
 
 ```bash
-bash scripts/validate.sh      # closing gate — JSON, version agreement, skill frontmatter
+bash scripts/validate.sh      # closing gate (run before every PR) — JSON, version agreement, skill frontmatter; "done" = catalog installs & skills selectable
 claude plugin validate .      # authoritative catalog check (also run inside validate.sh)
+/eng:new-skill <pack> <name>  # scaffold SKILL.md + bump both versions; then run the gate
 ```
 
 ## File map
@@ -50,13 +51,3 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 - **Built-in surface keeps growing** — run `/eng:prune-redundant-skills` periodically
   to catch drift before shipping a skill that duplicates a new native command.
 
-## Adding a skill
-
-Use `/eng:new-skill <pack> <name>` — it scaffolds `SKILL.md` with a compliant
-frontmatter, bumps both versions, and reminds you to update the README list. Then run
-the closing gate.
-
-## Closing gate (run before every PR)
-
-`bash scripts/validate.sh` — "done" means the catalog installs and every skill stays
-selectable, not just that an edit saved.
