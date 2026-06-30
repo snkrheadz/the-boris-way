@@ -17,7 +17,8 @@
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
-#   7. `claude plugin validate .` if the CLI is available (authoritative).
+#   7. Every skill on disk is documented in README.md (catalog-drift guard).
+#   8. `claude plugin validate .` if the CLI is available (authoritative).
 #
 # Usage: bash scripts/validate.sh   (run from the repo root)
 
@@ -142,7 +143,32 @@ else
   note "shellcheck absent — skipped shell static analysis"
 fi
 
-# --- 7. authoritative CLI check (optional) ----------------------------------
+# --- 7. README ↔ catalog drift ----------------------------------------------
+# README.md advertises each pack's skills by hand. Every skill on disk must be
+# documented there (as "/pack:name" or a backtick-quoted `name`) so a new skill
+# can't ship invisible. README-only entries are out of scope — this guards the
+# disk → docs direction, where drift hides real skills from consumers.
+readme="README.md"
+if [ ! -f "$readme" ]; then
+  note "$readme absent — skipped README drift check"
+else
+  readme_fail=0
+  while IFS=$'\t' read -r p src; do
+    d="${src#./}"
+    [ -d "$d/skills" ] || continue
+    for s in "$d"/skills/*/; do
+      [ -d "$s" ] || continue
+      n="$(basename "$s")"
+      if ! grep -qF "/$p:$n" "$readme" && ! grep -qF "\`$n\`" "$readme"; then
+        err "skill '$p:$n' is not documented in $readme (add /$p:$n or \`$n\`)"
+        readme_fail=1
+      fi
+    done
+  done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
+  [ "$readme_fail" -eq 0 ] && ok "every skill is documented in $readme"
+fi
+
+# --- 8. authoritative CLI check (optional) ----------------------------------
 if command -v claude >/dev/null 2>&1; then
   if claude plugin validate . >/dev/null 2>&1; then
     ok "claude plugin validate ."

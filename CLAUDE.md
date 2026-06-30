@@ -45,6 +45,15 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
   main-session model, which on a Fable 5 session silently buys top-tier cost. Omit the
   pin *only* for a skill deliberately meant to run on the main session — `validate.sh`
   warns (not fails) so the choice stays visible.
+- **`context: fork` runs the skill in an isolated subagent.** Add it when the skill goes
+  off to produce a bounded deliverable or finding and returns a summary — work whose
+  intermediate tokens (file reads, query output, test logs) would otherwise flood the
+  main thread (`db-query`, `techdebt`, `test-and-fix`, `html-output`, `refactor-swarm`).
+  Omit it when the skill's output *is* the conversational answer or it needs the live
+  session / user back-and-forth — the reasoning family (`deep-thinking`,
+  `honest-reasoning`, `first-principles`, `life-decision`) and interactive/sequential
+  skills (`create-pr`, `review-inbox`, the spec phases). When unsure, omit — main-session
+  is the safe default.
 - **Bump the version in BOTH** the pack's `plugin.json` and its `marketplace.json`
   entry on every content change. Installed caches are keyed by version; disagree and
   consumers serve stale skills forever. `validate.sh` fails a mismatch.

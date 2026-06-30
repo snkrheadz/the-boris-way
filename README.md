@@ -73,6 +73,8 @@ What Core ships (role-agnostic):
 /plugin install document-skills@anthropic-agent-skills
 ```
 
+Skills (1): `task-definition-sheet` — the 業務定義シート (task definition sheet) as A4 HTML.
+
 #### Engineer
 
 ```
