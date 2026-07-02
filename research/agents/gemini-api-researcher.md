@@ -1,6 +1,6 @@
 ---
 name: gemini-api-researcher
-description: Google Gemini API research and implementation support (ai.google.dev). For Vertex AI routes use gcp-best-practices-advisor instead. Triggers: Gemini API usage, generateContent, multimodal processing, Function Calling, Gemini pricing/new features, google-genai SDK, Live API
+description: "Google Gemini API research and implementation support (ai.google.dev). For Vertex AI routes use gcp-best-practices-advisor instead. Triggers: Gemini API usage, generateContent, multimodal processing, Function Calling, Gemini pricing/new features, google-genai SDK, Live API"
 tools: WebSearch, WebFetch, Read, Glob, Grep
 model: sonnet
 color: blue

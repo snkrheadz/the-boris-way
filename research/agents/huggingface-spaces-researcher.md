@@ -1,6 +1,6 @@
 ---
 name: huggingface-spaces-researcher
-description: Research, analyze, and compare HuggingFace Spaces for AI/ML demos and prototypes — find implementation examples, extract code patterns from Spaces, discover official/community demos for research papers. Triggers: find Spaces for a model (e.g. SDXL), Gradio/Streamlit implementation patterns, demo for a paper (e.g. Segment Anything)
+description: "Research, analyze, and compare HuggingFace Spaces for AI/ML demos and prototypes — find implementation examples, extract code patterns from Spaces, discover official/community demos for research papers. Triggers: find Spaces for a model (e.g. SDXL), Gradio/Streamlit implementation patterns, demo for a paper (e.g. Segment Anything)"
 tools: WebSearch, WebFetch, Read, Glob, Grep
 model: sonnet
 color: cyan

@@ -20,6 +20,13 @@ if [ -z "$command" ]; then
     exit 0
 fi
 
+# Public keys are not sensitive — scrub `.ssh/id_*.pub` tokens first so that
+# reading a public key (cat ~/.ssh/id_ed25519.pub, ssh-copy-id -i ...) does
+# not trip the `.ssh/id_` suffix below; private-key spellings still match.
+shopt -s extglob
+pub_pat='.ssh/id_+([A-Za-z0-9_-]).pub'
+command="${command//$pub_pat/.ssh/PUBKEY}"
+
 # Home-relative sensitive paths. Each is checked in the three spellings a
 # command normally uses: expanded ($HOME already resolved by this shell),
 # tilde (~/...), and the literal string $HOME/... — the latter two are how

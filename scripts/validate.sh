@@ -18,6 +18,10 @@
 #      a description (≤10 lines — agent descriptions load into EVERY session's
 #      system prompt), a `model:` pin (fail — agents have no main-session
 #      exemption), and explicit `tools:` (warn — omitting inherits ALL tools).
+#   4c. Every skill/agent frontmatter block PARSES as YAML (needs
+#      python3+PyYAML; warns and skips otherwise). Line-greps can't catch an
+#      unquoted value like `description: ... Triggers: ...` turning the block
+#      into an invalid nested mapping — strict loaders then drop the file.
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
@@ -38,6 +42,35 @@ note() { printf '\033[33mWARN\033[0m %s\n' "$1" >&2; warn=$((warn + 1)); }
 ok()   { printf '\033[32m  ok\033[0m %s\n' "$1"; }
 
 marketplace=".claude-plugin/marketplace.json"
+
+# --- frontmatter YAML parser (backs checks 4/4b — see 4c in the header) -----
+have_yaml=0
+if command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' >/dev/null 2>&1; then
+  have_yaml=1
+else
+  note "python3+PyYAML absent — skipped frontmatter YAML parse (check 4c)"
+fi
+
+frontmatter_yaml_ok() {
+  # $1 = markdown file that may start with a `---` frontmatter block.
+  # Exit 0 when the block parses as YAML (or there is no block — the
+  # presence checks in 4/4b own that case); exit 1 when it does not parse
+  # or is unterminated.
+  python3 - "$1" <<'PY'
+import sys, yaml
+lines = open(sys.argv[1], encoding="utf-8").read().split("\n")
+if not lines or lines[0] != "---":
+    sys.exit(0)
+try:
+    end = lines[1:].index("---") + 1
+except ValueError:
+    sys.exit(1)
+try:
+    yaml.safe_load("\n".join(lines[1:end]))
+except yaml.YAMLError:
+    sys.exit(1)
+PY
+}
 
 # --- 1. marketplace.json is valid JSON --------------------------------------
 if ! jq empty "$marketplace" 2>/dev/null; then
@@ -85,6 +118,10 @@ while IFS=$'\t' read -r pack source mp_version; do
       afile="$(basename "$agent_md" .md)"
       afm="$(awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$agent_md")"
 
+      if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$agent_md"; then
+        err "$agent_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
+      fi
+
       aname="$(printf '%s\n' "$afm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
       if [ "$aname" != "$afile" ]; then
         err "$agent_md: frontmatter name='$aname' != file '$afile'"
@@ -117,6 +154,10 @@ while IFS=$'\t' read -r pack source mp_version; do
     sdir="$(basename "$(dirname "$skill_md")")"
     # frontmatter is the block between the first two `---` lines
     fm="$(awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$skill_md")"
+
+    if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$skill_md"; then
+      err "$skill_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
+    fi
 
     name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
     if [ "$name" != "$sdir" ]; then

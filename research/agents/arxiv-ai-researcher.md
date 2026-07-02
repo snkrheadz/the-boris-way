@@ -1,6 +1,6 @@
 ---
 name: arxiv-ai-researcher
-description: Research AI models, architectures, and techniques from arXiv literature — paper discovery, comparison, synthesis, and extraction of implementation details. Triggers: explain/compare a model architecture (e.g. Mamba vs Transformers), survey state-of-the-art for a task, extract implementation details from a paper (e.g. FlashAttention), latest arXiv findings
+description: "Research AI models, architectures, and techniques from arXiv literature — paper discovery, comparison, synthesis, and extraction of implementation details. Triggers: explain/compare a model architecture (e.g. Mamba vs Transformers), survey state-of-the-art for a task, extract implementation details from a paper (e.g. FlashAttention), latest arXiv findings"
 tools: WebSearch, WebFetch, Read, Glob, Grep
 model: sonnet
 color: pink

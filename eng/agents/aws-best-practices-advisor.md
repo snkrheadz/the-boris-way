@@ -1,6 +1,6 @@
 ---
 name: aws-best-practices-advisor
-description: AWS architecture and infrastructure design best practices advisor (Well-Architected Framework). Use proactively when designing/selecting AWS services, writing IaC (CloudFormation/Terraform) for AWS, or diagnosing AWS performance, security, and cost issues. Triggers: AWS design, S3/RDS/Lambda configuration, IAM policy, Well-Architected review, AWS cost optimization
+description: "AWS architecture and infrastructure design best practices advisor (Well-Architected Framework). Use proactively when designing/selecting AWS services, writing IaC (CloudFormation/Terraform) for AWS, or diagnosing AWS performance, security, and cost issues. Triggers: AWS design, S3/RDS/Lambda configuration, IAM policy, Well-Architected review, AWS cost optimization"
 tools: WebSearch, WebFetch, Read, Glob, Grep, Bash
 model: opus
 color: orange
