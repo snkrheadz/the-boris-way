@@ -72,6 +72,13 @@ except yaml.YAMLError:
 PY
 }
 
+frontmatter() {
+  # $1 = markdown file; prints the block between the first two `---` lines.
+  # The single definition both check 4 and 4b parse with — fix parsing here,
+  # not in per-check copies.
+  awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$1"
+}
+
 # --- 1. marketplace.json is valid JSON --------------------------------------
 if ! jq empty "$marketplace" 2>/dev/null; then
   err "$marketplace is not valid JSON"
@@ -106,6 +113,36 @@ while IFS=$'\t' read -r pack source mp_version; do
     ok "pack '$pack': version $pj_version agrees"
   fi
 
+  # 4. per-skill frontmatter
+  skills_dir="$dir/skills"
+  if [ -d "$skills_dir" ]; then
+    for skill_md in "$skills_dir"/*/SKILL.md; do
+      [ -e "$skill_md" ] || continue
+      sdir="$(basename "$(dirname "$skill_md")")"
+      fm="$(frontmatter "$skill_md")"
+
+      if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$skill_md"; then
+        err "$skill_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
+      fi
+
+      name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
+      if [ "$name" != "$sdir" ]; then
+        err "$skill_md: frontmatter name='$name' != directory '$sdir'"
+      fi
+
+      if ! printf '%s\n' "$fm" | grep -q '^description:'; then
+        err "$skill_md: no description in frontmatter"
+      elif ! printf '%s\n' "$fm" | grep -q 'Triggers:'; then
+        err "$skill_md: description lacks 'Triggers:' (the auto-selection surface)"
+      fi
+
+      if ! printf '%s\n' "$fm" | grep -q '^model:'; then
+        note "$skill_md: no model pin (intended main-session skill? otherwise pin one)"
+      fi
+    done
+    ok "pack '$pack': skills frontmatter checked"
+  fi
+
   # 4b. per-agent frontmatter — an agent's description is loaded into EVERY
   # session's system prompt, so it is checked as strictly as a skill's:
   # name matches the file, description present and lean, model pinned
@@ -116,7 +153,7 @@ while IFS=$'\t' read -r pack source mp_version; do
     for agent_md in "$agents_dir"/*.md; do
       [ -e "$agent_md" ] || continue
       afile="$(basename "$agent_md" .md)"
-      afm="$(awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$agent_md")"
+      afm="$(frontmatter "$agent_md")"
 
       if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$agent_md"; then
         err "$agent_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
@@ -145,36 +182,6 @@ while IFS=$'\t' read -r pack source mp_version; do
     done
     ok "pack '$pack': agents frontmatter checked"
   fi
-
-  # 4. per-skill frontmatter
-  skills_dir="$dir/skills"
-  [ -d "$skills_dir" ] || continue
-  for skill_md in "$skills_dir"/*/SKILL.md; do
-    [ -e "$skill_md" ] || continue
-    sdir="$(basename "$(dirname "$skill_md")")"
-    # frontmatter is the block between the first two `---` lines
-    fm="$(awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$skill_md")"
-
-    if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$skill_md"; then
-      err "$skill_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
-    fi
-
-    name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
-    if [ "$name" != "$sdir" ]; then
-      err "$skill_md: frontmatter name='$name' != directory '$sdir'"
-    fi
-
-    if ! printf '%s\n' "$fm" | grep -q '^description:'; then
-      err "$skill_md: no description in frontmatter"
-    elif ! printf '%s\n' "$fm" | grep -q 'Triggers:'; then
-      err "$skill_md: description lacks 'Triggers:' (the auto-selection surface)"
-    fi
-
-    if ! printf '%s\n' "$fm" | grep -q '^model:'; then
-      note "$skill_md: no model pin (intended main-session skill? otherwise pin one)"
-    fi
-  done
-  ok "pack '$pack': skills frontmatter checked"
 done < <(jq -r '.plugins[] | [.name, .source, .version] | @tsv' "$marketplace")
 
 # --- 5. cross-reference integrity -------------------------------------------

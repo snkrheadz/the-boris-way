@@ -1,6 +1,6 @@
 ---
 name: verify-subagent-result
-description: Performs cross-validation of SubAgent results. Verifies information accuracy across multiple sources and re-evaluates confidence scores. Used when confidence score is 50-69.
+description: "Cross-validates a subagent's findings against independent sources and re-evaluates their confidence. Invoke explicitly from the main session when you judge a subagent's result mid-confidence (roughly 50-69/100) — nothing emits that score automatically. Triggers: verify subagent result, cross-validate findings, mid-confidence research result"
 tools: WebSearch, WebFetch, Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -9,7 +9,10 @@ You are a specialized agent for verifying SubAgent results.
 
 ## Invocation Conditions
 
-- Invoked when confidence score is in the **50-69** range (below 50: discard; above 69: trust as-is)
+- Invoked **explicitly by the calling session** when it judges a subagent's
+  result to be mid-confidence — roughly **50-69** on a 0-100 scale (below 50:
+  discard outright; above 69: trust as-is). No skill or agent emits this score
+  automatically; the caller makes the judgment and passes the result to verify.
 
 ## Verification Process
 

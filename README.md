@@ -108,8 +108,9 @@ For anyone investigating AI/ML papers, APIs, and models — any role can add it.
 Agents (4): `arxiv-ai-researcher` (paper discovery & synthesis),
 `gemini-api-researcher` (Gemini API capabilities & usage),
 `huggingface-spaces-researcher` (HF Spaces / model discovery),
-`verify-subagent-result` (cross-validates subagent findings whose confidence score
-lands in 50–69 against independent sources).
+`verify-subagent-result` (cross-validates subagent findings against independent
+sources — invoke it explicitly when you judge a result mid-confidence, roughly
+50–69/100; nothing emits that score automatically).
 
 #### Strategy (role-agnostic, optional)
 
@@ -327,7 +328,8 @@ The `model:` pin also decides how detailed the instructions should be
   audits every skill against the current built-ins, removes the now-redundant ones, and fixes
   the dependent files (README counts, `plugin.json`, `marketplace.json`, cross-skill links).
 - **`shared/CLAUDE.md` is a fork point.** If your personal `~/.claude/CLAUDE.md` gains a
-  team-relevant rule, backport it here (diff the two periodically) — otherwise consumers
-  drift behind the working philosophy this repo claims to distribute.
+  team-relevant rule, backport it here — otherwise consumers drift behind the working
+  philosophy this repo claims to distribute. Checking is one command:
+  `diff -u shared/CLAUDE.md ~/.claude/CLAUDE.md`.
 - Consumers pull updates with `/plugin marketplace update the-boris-way`.
 - License: MIT. The external `phuryn/pm-skills` is MIT too.
