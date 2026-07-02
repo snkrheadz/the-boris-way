@@ -1,36 +1,7 @@
 ---
 name: arxiv-ai-researcher
-description: |
-  Use this agent when you need to research AI models, architectures, or techniques based on academic literature from arXiv. This includes understanding new model papers, comparing different approaches, summarizing research findings, extracting implementation details from papers, or staying updated on state-of-the-art developments in machine learning and artificial intelligence.
-
-  Examples:
-
-  <example>
-  Context: User wants to understand a specific AI model architecture.
-  user: "Can you explain how the Mamba architecture works and how it compares to Transformers?"
-  assistant: "I'll use the arxiv-ai-researcher agent to research the Mamba architecture from relevant arXiv papers and provide a comprehensive comparison with Transformers."
-  <commentary>
-  Since the user is asking about a specific AI architecture that has been published on arXiv, use the arxiv-ai-researcher agent to find and synthesize information from relevant academic papers.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User needs to find state-of-the-art approaches for a specific AI task.
-  user: "What are the latest approaches for efficient LLM inference?"
-  assistant: "Let me launch the arxiv-ai-researcher agent to survey recent arXiv publications on efficient LLM inference techniques and summarize the key findings."
-  <commentary>
-  Since the user is asking about recent developments in AI research, use the arxiv-ai-researcher agent to search and synthesize relevant papers from arXiv.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User wants implementation details from a research paper.
-  user: "I found a paper about FlashAttention. Can you help me understand the key implementation details?"
-  assistant: "I'll use the arxiv-ai-researcher agent to analyze the FlashAttention paper and extract the key implementation details, algorithms, and optimization techniques."
-  <commentary>
-  Since the user needs detailed technical information from an academic paper, use the arxiv-ai-researcher agent to thoroughly analyze the paper and extract relevant implementation details.
-  </commentary>
-  </example>
+description: "Research AI models, architectures, and techniques from arXiv literature — paper discovery, comparison, synthesis, and extraction of implementation details. Triggers: explain/compare a model architecture (e.g. Mamba vs Transformers), survey state-of-the-art for a task, extract implementation details from a paper (e.g. FlashAttention), latest arXiv findings"
+tools: WebSearch, WebFetch, Read, Glob, Grep, Bash
 model: sonnet
 color: pink
 ---

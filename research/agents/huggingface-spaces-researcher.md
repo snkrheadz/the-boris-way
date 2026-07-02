@@ -1,36 +1,7 @@
 ---
 name: huggingface-spaces-researcher
-description: |
-  Use this agent when you need to research, analyze, or compare HuggingFace Spaces for AI/ML demos and prototypes. This includes finding implementation examples, understanding how models are deployed as interactive demos, extracting code patterns from Spaces, or discovering research paper demonstrations.
-
-  Examples:
-
-  <example>
-  Context: User wants to find demos related to a specific AI technique.
-  user: "Find me Spaces that demonstrate Stable Diffusion XL"
-  assistant: "I'll launch the huggingface-spaces-researcher agent to search for SDXL-related Spaces and analyze their implementations."
-  <commentary>
-  Since the user is looking for specific model demos, use the huggingface-spaces-researcher agent to search and analyze relevant Spaces.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User needs to understand implementation patterns from HuggingFace Spaces.
-  user: "How do popular Gradio apps handle image generation queues?"
-  assistant: "Let me use the huggingface-spaces-researcher agent to analyze several popular image generation Spaces and extract their queue handling patterns."
-  <commentary>
-  Since the user needs implementation insights from multiple Spaces, use the huggingface-spaces-researcher agent for comprehensive analysis.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User wants to find the official demo for a research paper.
-  user: "Is there a demo for the Segment Anything paper?"
-  assistant: "I'll use the huggingface-spaces-researcher agent to find official and community demos for the Segment Anything Model (SAM)."
-  <commentary>
-  Since the user is looking for paper-related demos, use the huggingface-spaces-researcher agent to search and verify official implementations.
-  </commentary>
-  </example>
+description: "Research, analyze, and compare HuggingFace Spaces for AI/ML demos and prototypes — find implementation examples, extract code patterns from Spaces, discover official/community demos for research papers. Triggers: find Spaces for a model (e.g. SDXL), Gradio/Streamlit implementation patterns, demo for a paper (e.g. Segment Anything)"
+tools: WebSearch, WebFetch, Read, Glob, Grep, Bash
 model: sonnet
 color: cyan
 ---

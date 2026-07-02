@@ -1,17 +1,6 @@
 ---
 name: gemini-api-researcher
-description: |
-  Google Gemini API research and implementation support agent. Specializes in Gemini API via ai.google.dev. Use gcp-best-practices-advisor for Vertex AI routes.
-
-  Trigger examples:
-  - How to use Gemini API
-  - How to use generateContent
-  - Multimodal processing with Gemini
-  - Function Calling implementation
-  - Gemini pricing information
-  - Gemini 2.0 Flash new features
-  - google-genai SDK usage
-  - Real-time processing with Live API
+description: "Google Gemini API research and implementation support (ai.google.dev). For Vertex AI routes use gcp-best-practices-advisor instead. Triggers: Gemini API usage, generateContent, multimodal processing, Function Calling, Gemini pricing/new features, google-genai SDK, Live API"
 tools: WebSearch, WebFetch, Read, Glob, Grep
 model: sonnet
 color: blue

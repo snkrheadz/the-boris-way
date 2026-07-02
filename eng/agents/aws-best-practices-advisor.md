@@ -1,34 +1,7 @@
 ---
 name: aws-best-practices-advisor
-description: |
-  Use this agent when you need guidance on AWS architecture decisions, infrastructure design, security configurations, cost optimization, or when implementing AWS services following AWS Well-Architected Framework principles. This agent should be called proactively when:
-
-  <example>
-  Context: The user is designing a new AWS infrastructure or discussing AWS service selection.
-  user: "I want to create an S3 bucket and implement file storage functionality"
-  assistant: "I'm going to use the Task tool to launch the aws-best-practices-advisor agent to ensure we follow AWS best practices for S3 bucket configuration."
-  <commentary>
-  Since the user is planning to create S3 resources, use the aws-best-practices-advisor agent to provide guidance on bucket policies, encryption, versioning, and access controls.
-  </commentary>
-  </example>
-
-  <example>
-  Context: The user is writing CloudFormation or Terraform code for AWS resources.
-  user: "Write a CloudFormation template to deploy this Lambda function"
-  assistant: "I'll create a CloudFormation template for the Lambda function. First, let's use the aws-best-practices-advisor agent to confirm best practices."
-  <commentary>
-  When creating IaC for AWS, use the aws-best-practices-advisor agent to ensure proper IAM roles, VPC configurations, logging, and monitoring are included.
-  </commentary>
-  </example>
-
-  <example>
-  Context: The user is troubleshooting AWS-related issues or reviewing existing AWS configurations.
-  user: "The production RDS is slow and I want to improve it"
-  assistant: "For RDS performance improvement, I'll use the aws-best-practices-advisor agent to provide AWS best practices-based diagnosis and improvement recommendations."
-  <commentary>
-  For AWS performance issues, use the aws-best-practices-advisor agent to analyze the situation and provide recommendations aligned with AWS best practices.
-  </commentary>
-  </example>
+description: "AWS architecture and infrastructure design best practices advisor (Well-Architected Framework). Use proactively when designing/selecting AWS services, writing IaC (CloudFormation/Terraform) for AWS, or diagnosing AWS performance, security, and cost issues. Triggers: AWS design, S3/RDS/Lambda configuration, IAM policy, Well-Architected review, AWS cost optimization"
+tools: WebSearch, WebFetch, Read, Glob, Grep, Bash
 model: opus
 color: orange
 ---

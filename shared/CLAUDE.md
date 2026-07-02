@@ -11,9 +11,10 @@ micromanagement; trust the model and keep this file minimal.
 
 ## 1. auto-first execution
 - Default to **auto mode**: act, don't ask. The harness routes risky commands through a
-  security check, and (if you installed the `core` plugin) its `pre-tool-guard` hook
-  blocks sensitive-file access — so narrating yes/no for each step adds no safety; it
-  just hides the calls that matter.
+  security check, and two accident guardrails — the README's `permissions.deny` block
+  (Channel B) and the `core` plugin's `pre-tool-guard` hook — catch sensitive-file
+  access. They are guardrails against mistakes, not a security boundary; narrating
+  yes/no for each step adds no safety, it just hides the calls that matter.
 - **Skip plan mode for ordinary work.** Current models don't need a separate planning
   step. Reach for plan mode only when a choice is genuinely hard to reverse
   (schema/data migrations, public-facing or destructive changes, multi-service
@@ -35,6 +36,12 @@ Escalate only as far as the work demands; the difference is who holds the plan.
 
 **Rule:** plan fits in 2–3 steps → subagent or skill; coordinated multi-role → Team;
 wide fan-out + verify/synthesize → Workflow.
+
+- **Web fan-out is serial, not parallel.** Many concurrent `WebFetch` calls or parallel
+  research subagents against one host trip CDN rate limits and bot detection, which
+  slows the whole job. Launch web-research subagents one at a time; triage with
+  `WebSearch`, then fetch only a curated few; prefer typed channels (the `research`
+  pack's researchers) over raw scraping.
 
 ### Model routing
 - Pin `model:` explicitly when delegating — subagents inherit the main-session model
