@@ -14,10 +14,15 @@
 #   4. Each skills/<name>/SKILL.md has frontmatter whose `name:` matches its
 #      directory, carries a `description:` containing "Triggers:", and pins a
 #      `model:` (warn-only — an intentional main-session skill may omit it).
+#   4b. Each agents/<name>.md has frontmatter whose `name:` matches the file,
+#      a description (≤10 lines — agent descriptions load into EVERY session's
+#      system prompt), a `model:` pin (fail — agents have no main-session
+#      exemption), and explicit `tools:` (warn — omitting inherits ALL tools).
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
-#   7. Every skill on disk is documented in README.md (catalog-drift guard).
+#   7. Every skill AND agent on disk is documented in README.md
+#      (catalog-drift guard).
 #   8. `claude plugin validate .` if the CLI is available (authoritative).
 #
 # Usage: bash scripts/validate.sh   (run from the repo root)
@@ -66,6 +71,42 @@ while IFS=$'\t' read -r pack source mp_version; do
     err "pack '$pack': version mismatch — plugin.json=$pj_version, marketplace.json=$mp_version (bump BOTH)"
   else
     ok "pack '$pack': version $pj_version agrees"
+  fi
+
+  # 4b. per-agent frontmatter — an agent's description is loaded into EVERY
+  # session's system prompt, so it is checked as strictly as a skill's:
+  # name matches the file, description present and lean, model pinned
+  # (agents have no main-session exemption), tools explicit (omitting
+  # `tools:` inherits ALL tools, over-privileging advisory agents).
+  agents_dir="$dir/agents"
+  if [ -d "$agents_dir" ]; then
+    for agent_md in "$agents_dir"/*.md; do
+      [ -e "$agent_md" ] || continue
+      afile="$(basename "$agent_md" .md)"
+      afm="$(awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$agent_md")"
+
+      aname="$(printf '%s\n' "$afm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
+      if [ "$aname" != "$afile" ]; then
+        err "$agent_md: frontmatter name='$aname' != file '$afile'"
+      fi
+
+      if ! printf '%s\n' "$afm" | grep -q '^description:'; then
+        err "$agent_md: no description in frontmatter"
+      else
+        desc_lines="$(printf '%s\n' "$afm" | awk '/^description:/{d=1; n++; next} d && /^[a-z-]+:/{exit} d{n++} END{print n+0}')"
+        if [ "$desc_lines" -gt 10 ]; then
+          err "$agent_md: description spans $desc_lines lines — it is always-loaded context; compress to a trigger summary"
+        fi
+      fi
+
+      if ! printf '%s\n' "$afm" | grep -q '^model:'; then
+        err "$agent_md: no model pin (an unpinned agent inherits the main-session model)"
+      fi
+      if ! printf '%s\n' "$afm" | grep -q '^tools:'; then
+        note "$agent_md: no tools: in frontmatter (inherits ALL tools — pin the minimal set)"
+      fi
+    done
+    ok "pack '$pack': agents frontmatter checked"
   fi
 
   # 4. per-skill frontmatter
@@ -155,17 +196,28 @@ else
   readme_fail=0
   while IFS=$'\t' read -r p src; do
     d="${src#./}"
-    [ -d "$d/skills" ] || continue
-    for s in "$d"/skills/*/; do
-      [ -d "$s" ] || continue
-      n="$(basename "$s")"
-      if ! grep -qF "/$p:$n" "$readme" && ! grep -qF "\`$n\`" "$readme"; then
-        err "skill '$p:$n' is not documented in $readme (add /$p:$n or \`$n\`)"
-        readme_fail=1
-      fi
-    done
+    if [ -d "$d/skills" ]; then
+      for s in "$d"/skills/*/; do
+        [ -d "$s" ] || continue
+        n="$(basename "$s")"
+        if ! grep -qF "/$p:$n" "$readme" && ! grep -qF "\`$n\`" "$readme"; then
+          err "skill '$p:$n' is not documented in $readme (add /$p:$n or \`$n\`)"
+          readme_fail=1
+        fi
+      done
+    fi
+    if [ -d "$d/agents" ]; then
+      for a in "$d"/agents/*.md; do
+        [ -e "$a" ] || continue
+        n="$(basename "$a" .md)"
+        if ! grep -qF "\`$n\`" "$readme"; then
+          err "agent '$p:$n' is not documented in $readme (add \`$n\`)"
+          readme_fail=1
+        fi
+      done
+    fi
   done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
-  [ "$readme_fail" -eq 0 ] && ok "every skill is documented in $readme"
+  [ "$readme_fail" -eq 0 ] && ok "every skill and agent is documented in $readme"
 fi
 
 # --- 8. authoritative CLI check (optional) ----------------------------------

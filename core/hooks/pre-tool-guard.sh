@@ -1,6 +1,12 @@
 #!/bin/bash
-# PreToolUse hook: Block Bash commands that access sensitive files
-# This provides defense-in-depth alongside deny rules in settings.json
+# PreToolUse hook: Block Bash commands that access sensitive files.
+#
+# Scope (be honest about what this is): an accident guard, not a security
+# boundary. It catches the common mistake spellings of sensitive paths in a
+# Bash command string; a determined bypass is trivial. Pair it with the
+# permissions.deny block from the README (Channel B), which covers Read()
+# of the same files plus **/.env — deny rules can't ship in a plugin, so
+# this hook is the Channel-A layer of the same defense in depth.
 
 input=$(cat)
 
@@ -14,23 +20,30 @@ if [ -z "$command" ]; then
     exit 0
 fi
 
-# Sensitive file patterns to block
-SENSITIVE_PATTERNS=(
-    "$HOME/.secrets.env"
-    "$HOME/.aws/credentials"
-    "$HOME/.ssh/id_"
-    "$HOME/.kube/config"
-    "$HOME/.docker/config.json"
-    "$HOME/.gnupg/"
-    "$HOME/.netrc"
+# Home-relative sensitive paths. Each is checked in the three spellings a
+# command normally uses: expanded ($HOME already resolved by this shell),
+# tilde (~/...), and the literal string $HOME/... — the latter two are how
+# commands are usually written, and matching only the expanded form would
+# let `cat ~/.ssh/id_rsa` sail through.
+SENSITIVE_SUFFIXES=(
+    ".secrets.env"
+    ".aws/credentials"
+    ".ssh/id_"
+    ".kube/config"
+    ".docker/config.json"
+    ".gnupg/"
+    ".netrc"
 )
 
-for pattern in "${SENSITIVE_PATTERNS[@]}"; do
-    if [[ "$command" == *"$pattern"* ]]; then
-        echo "BLOCKED: Command accesses sensitive file matching: ${pattern}"
-        echo "Use environment variables or dedicated secret managers instead."
-        exit 2
-    fi
+for suffix in "${SENSITIVE_SUFFIXES[@]}"; do
+    # shellcheck disable=SC2088,SC2016  # literal "~/" and "$HOME/" are the spellings being matched, not paths to expand
+    for prefix in "$HOME/" "~/" '$HOME/'; do
+        if [[ "$command" == *"${prefix}${suffix}"* ]]; then
+            echo "BLOCKED: Command accesses sensitive file matching: ${prefix}${suffix}"
+            echo "Use environment variables or dedicated secret managers instead."
+            exit 2
+        fi
+    done
 done
 
 # Block pipe-to-shell patterns
