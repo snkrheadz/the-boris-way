@@ -1,6 +1,6 @@
 ---
 name: marketplace-quality-auditor
-description: "Quality gate beyond validate.sh for this repo: runs the closing gate, then audits what it cannot see — description quality on the auto-selection surface, instruction density vs model pin, context-fork fit, sibling-skill boundaries. Read-only; returns ranked findings. Triggers: marketplace quality audit, 品質監査, skill convention check, description audit"
+description: "Quality gate beyond validate.sh for this repo: runs the closing gate, then audits what it cannot see — description quality on the auto-selection surface, instruction density vs model pin, context-fork fit, sibling-skill boundaries. Read-only; returns ranked findings. For catalog/version/doc drift and CI health use marketplace-ops-manager instead. Triggers: marketplace quality audit, 品質監査, skill convention check, description audit"
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -28,8 +28,9 @@ above it.
      conversational or interactive skills.
    - Unpinned skills: is the main-session intent recorded near the
      frontmatter so the warn stays an explained choice?
-3. **Doc coherence**: pack lists and skill/agent counts in CLAUDE.md and
-   README.md match what is on disk.
+
+Catalog/doc drift (counts, versions, CI) belongs to `marketplace-ops-manager` —
+do not duplicate it here.
 
 ## Output
 

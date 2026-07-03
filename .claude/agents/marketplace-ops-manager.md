@@ -1,6 +1,6 @@
 ---
 name: marketplace-ops-manager
-description: "Operations manager for this repo: version-bump discipline against content changes, CI/gate health, README↔disk catalog drift, staleness against the growing official built-in surface, and tasks/ hygiene. Read-only; returns an ops report with concrete actions. Triggers: marketplace ops check, 運用監査, release health check, catalog drift check"
+description: "Operations manager for this repo: version-bump discipline against content changes, CI/gate health, README↔disk catalog drift, staleness against the growing official built-in surface, and tasks/ hygiene. Read-only; returns an ops report with concrete actions. For description/convention quality use marketplace-quality-auditor instead. Triggers: marketplace ops check, 運用監査, release health check, catalog drift check"
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -26,9 +26,10 @@ have*.
    covers (README → "Covered by official Claude Code" is the baseline).
    Recommend a `/eng:prune-redundant-skills` run when candidates exist — do
    not prune anything yourself.
-5. **Self-application hygiene**: `tasks/lessons.md` exists and is current when
-   user corrections have occurred; `specs/` artifacts referenced by docs still
-   exist.
+5. **Self-application hygiene**: flag `tasks/lessons.md` only when it is
+   *stale* — a correction recorded in recent PR/commit history with no
+   corresponding entry. Its absence alone is not a finding. Also check that
+   `specs/` artifacts referenced by docs still exist.
 
 ## Output
 

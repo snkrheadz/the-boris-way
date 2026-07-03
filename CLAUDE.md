@@ -64,11 +64,9 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 
 ## Maintenance loop
 
-Recurring upkeep is a team pass, not a hand-prompt: `/maintain-marketplace` fans
-out the `.claude/agents/` trio (philosophy-gap-analyst ·
-marketplace-quality-auditor · marketplace-ops-manager), synthesizes, applies
-convention-backed fixes, and closes with `validate.sh`. Run it weekly or after a
-Claude Code release — or schedule it as a routine (`/schedule`). Changes to
-`shared/CLAUDE.md` (distributed philosophy) are always proposed to a human,
-never auto-applied.
+Recurring upkeep is a team pass, not a hand-prompt: `/maintain-marketplace` runs
+`philosophy-gap-analyst` · `marketplace-quality-auditor` · `marketplace-ops-manager`
+(`.claude/agents/`, not distributed) — mechanics live in the skill itself. Run it
+weekly or after a Claude Code release, or schedule it as a routine. The standing
+rule: changes to `shared/CLAUDE.md` are always proposed, never auto-applied.
 

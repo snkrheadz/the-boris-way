@@ -1,6 +1,6 @@
 ---
 name: philosophy-gap-analyst
-description: "Audits this repo against Boris Cherny's latest public Claude Code philosophy: researches primary sources on the web, diffs them against shared/CLAUDE.md and the authoring conventions, and returns a ranked gap report with confidence-labelled backport candidates. Proposes only — never edits. Triggers: Boris哲学レビュー, philosophy gap analysis, 哲学追従チェック, philosophy drift audit"
+description: "Audits this repo against Boris Cherny's latest public Claude Code philosophy: researches primary sources on the web, diffs them against shared/CLAUDE.md and the authoring conventions, and returns a ranked gap report with confidence-labelled backport candidates. Proposes only — never edits; for editing/tuning a CLAUDE.md itself use /core:tune-claude-md instead. Triggers: Boris哲学レビュー, philosophy gap analysis, 哲学追従チェック, philosophy drift audit"
 tools: WebSearch, WebFetch, Read, Grep, Glob
 model: opus
 ---

@@ -24,13 +24,16 @@
 #      unquoted value like `description: ... Triggers: ...` turning the block
 #      into an invalid nested mapping — strict loaders then drop the file.
 #   4d. Repo-local .claude/ skills and agents (the maintainer surface, not
-#      distributed) answer to the same rules as 4/4b — the quality tools are
-#      gated too.
+#      distributed) answer to the same frontmatter rules as 4/4b — the quality
+#      tools are gated too. Git-tracked files only: contributors keep personal,
+#      untracked agents/skills under .claude/ and those are not the gate's.
+#      Maintainer agents must also be documented in CLAUDE.md (see 7).
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
 #   7. Every skill AND agent on disk is documented in README.md
-#      (catalog-drift guard).
+#      (catalog-drift guard). Maintainer agents under .claude/agents/ are not
+#      consumer-facing, so their home doc is CLAUDE.md instead.
 #   8. `claude plugin validate .` if the CLI is available (authoritative).
 #
 # Usage: bash scripts/validate.sh   (run from the repo root)
@@ -208,10 +211,18 @@ done < <(jq -r '.plugins[] | [.name, .source, .version] | @tsv' "$marketplace")
 # --- 4d. repo-local maintainer surface (.claude/) ----------------------------
 # The maintainer agent team and its orchestration skill live outside the packs
 # (they are not distributed), but they answer to the same frontmatter rules —
-# the quality tools go through the gate too.
+# the quality tools go through the gate too. Only git-tracked files are gated:
+# .claude/ is also where contributors keep personal, untracked agents/skills,
+# and those must not fail a shared gate. Outside a git checkout (tarball
+# export) everything is gated — an export carries no personal files.
+in_git=0
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 && in_git=1
+is_gated() { [ "$in_git" -eq 0 ] || git ls-files --error-unmatch "$1" >/dev/null 2>&1; }
+
 if [ -d ".claude/skills" ]; then
   for skill_md in .claude/skills/*/SKILL.md; do
     [ -e "$skill_md" ] || continue
+    is_gated "$skill_md" || continue
     check_skill_md "$skill_md"
   done
   ok ".claude/skills: frontmatter checked"
@@ -219,6 +230,7 @@ fi
 if [ -d ".claude/agents" ]; then
   for agent_md in .claude/agents/*.md; do
     [ -e "$agent_md" ] || continue
+    is_gated "$agent_md" || continue
     check_agent_md "$agent_md"
   done
   ok ".claude/agents: frontmatter checked"
@@ -306,6 +318,23 @@ else
     fi
   done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
   [ "$readme_fail" -eq 0 ] && ok "every skill and agent is documented in $readme"
+fi
+
+# Maintainer agents (.claude/agents/) are not consumer-facing, so README is not
+# their home — but they must be documented in CLAUDE.md (the maintainer's map),
+# or a new agent ships invisible to the very sessions meant to use it.
+if [ -d ".claude/agents" ] && [ -f "CLAUDE.md" ]; then
+  cmd_fail=0
+  for a in .claude/agents/*.md; do
+    [ -e "$a" ] || continue
+    is_gated "$a" || continue
+    n="$(basename "$a" .md)"
+    if ! grep -qF "$n" CLAUDE.md; then
+      err "maintainer agent '$n' is not documented in CLAUDE.md"
+      cmd_fail=1
+    fi
+  done
+  [ "$cmd_fail" -eq 0 ] && ok "every .claude/ maintainer agent is documented in CLAUDE.md"
 fi
 
 # --- 8. authoritative CLI check (optional) ----------------------------------

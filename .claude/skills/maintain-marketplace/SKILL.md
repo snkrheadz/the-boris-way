@@ -1,6 +1,7 @@
 ---
 name: maintain-marketplace
 description: "Standing maintenance pass for this repo, run as an agent team: philosophy-gap-analyst, marketplace-quality-auditor, and marketplace-ops-manager in parallel, then synthesize, apply convention-backed fixes, and close with the gate. Run interactively or as a scheduled routine. Triggers: marketplace maintenance, メンテナンスパス, 定期監査, boris-way maintenance run"
+user-invocable: true
 # no model: pin — this skill deliberately orchestrates on the main session
 ---
 
@@ -22,8 +23,10 @@ maintainer agents defined in `.claude/agents/` and owns the synthesis.
      human; never auto-apply them.
 3. **Apply fix-now items** on a branch. Bump the pack version in BOTH
    `plugin.json` and `marketplace.json` whenever pack content changed.
-4. **Close with the gate**: `bash scripts/validate.sh` must pass. Then open a
-   PR whose body carries the findings table and the untouched "propose" list.
+4. **Close with the gate**: `bash scripts/validate.sh` must pass. Then open the
+   PR via `/eng:create-pr` (it owns the base-sync guard — do not use a bare
+   `gh pr create`), with a body carrying the findings table and the untouched
+   "propose" list.
 
 ## Cadence
 
