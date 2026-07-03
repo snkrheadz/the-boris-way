@@ -1,6 +1,6 @@
 ---
 name: gcp-best-practices-advisor
-description: GCP architecture and infrastructure design best practices advisor. Use for design consultation on Cloud Storage, Compute Engine, Cloud Functions, BigQuery, etc.
+description: "GCP architecture and infrastructure design best practices advisor. Use for design consultation on Cloud Storage, Compute Engine, Cloud Functions, BigQuery, etc. Triggers: GCP design consultation, GCP best practices, GCPアーキテクチャ相談, BigQuery design"
 tools: WebSearch, WebFetch, Read, Glob, Grep, Bash
 model: sonnet
 ---

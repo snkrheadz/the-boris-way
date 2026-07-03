@@ -260,6 +260,7 @@ Now everyone is "same environment, immediately."
 ```
 the-boris-way/
 ├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec)
+├── .claude/                          # maintainer agent team + maintenance loop (not distributed)
 ├── CLAUDE.md                         # maintainer's map (auto-loaded when working ON this repo)
 ├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
 ├── core/                             # role-agnostic plugin
@@ -327,6 +328,10 @@ The `model:` pin also decides how detailed the instructions should be
 - Periodically run `/eng:prune-redundant-skills` — the official surface keeps growing, so it
   audits every skill against the current built-ins, removes the now-redundant ones, and fixes
   the dependent files (README counts, `plugin.json`, `marketplace.json`, cross-skill links).
+- Recurring upkeep runs as an agent team: `/maintain-marketplace` (`.claude/skills/`)
+  fans out the maintainer trio in `.claude/agents/` (gap-analyst / quality / ops),
+  applies convention-backed fixes, and closes with the gate. Schedule it as a routine
+  for unattended runs — philosophy backports are always proposed, never auto-applied.
 - **`shared/CLAUDE.md` is a fork point.** If your personal `~/.claude/CLAUDE.md` gains a
   team-relevant rule, backport it here — otherwise consumers drift behind the working
   philosophy this repo claims to distribute. Checking is one command:
