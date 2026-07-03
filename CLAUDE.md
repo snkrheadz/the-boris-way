@@ -27,12 +27,14 @@ claude plugin validate .      # authoritative catalog check (also run inside val
 <pack>/skills/<name>/SKILL.md     # skills are AUTO-DISCOVERED from here — not enumerated anywhere
 <pack>/agents/<name>.md           # agents, same idea
 core/hooks/                       # pre-tool-guard.sh + hooks.json (the only hook pack)
+.claude/agents/                   # maintainer team (NOT distributed): gap-analyst / quality / ops
+.claude/skills/                   # /maintain-marketplace — the loop that runs the team
 shared/CLAUDE.md                  # DISTRIBUTED philosophy (payload, not for this repo)
 scripts/validate.sh              # the gate
 ```
 
 Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `strategy` ·
-`writing`. README has the per-pack skill lists.
+`writing` · `spec`. README has the per-pack skill lists.
 
 ## Conventions (the *why* — mechanics are in README → Authoring conventions / Maintenance)
 
@@ -59,4 +61,14 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
   consumers serve stale skills forever. `validate.sh` fails a mismatch.
 - **Built-in surface keeps growing** — run `/eng:prune-redundant-skills` periodically
   to catch drift before shipping a skill that duplicates a new native command.
+
+## Maintenance loop
+
+Recurring upkeep is a team pass, not a hand-prompt: `/maintain-marketplace` fans
+out the `.claude/agents/` trio (philosophy-gap-analyst ·
+marketplace-quality-auditor · marketplace-ops-manager), synthesizes, applies
+convention-backed fixes, and closes with `validate.sh`. Run it weekly or after a
+Claude Code release — or schedule it as a routine (`/schedule`). Changes to
+`shared/CLAUDE.md` (distributed philosophy) are always proposed to a human,
+never auto-applied.
 

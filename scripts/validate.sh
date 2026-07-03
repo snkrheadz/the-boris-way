@@ -16,12 +16,16 @@
 #      `model:` (warn-only — an intentional main-session skill may omit it).
 #   4b. Each agents/<name>.md has frontmatter whose `name:` matches the file,
 #      a description (≤10 lines — agent descriptions load into EVERY session's
-#      system prompt), a `model:` pin (fail — agents have no main-session
+#      system prompt) containing "Triggers:" (agents share the auto-selection
+#      surface with skills), a `model:` pin (fail — agents have no main-session
 #      exemption), and explicit `tools:` (warn — omitting inherits ALL tools).
 #   4c. Every skill/agent frontmatter block PARSES as YAML (needs
 #      python3+PyYAML; warns and skips otherwise). Line-greps can't catch an
 #      unquoted value like `description: ... Triggers: ...` turning the block
 #      into an invalid nested mapping — strict loaders then drop the file.
+#   4d. Repo-local .claude/ skills and agents (the maintainer surface, not
+#      distributed) answer to the same rules as 4/4b — the quality tools are
+#      gated too.
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
@@ -79,6 +83,68 @@ frontmatter() {
   awk 'NR==1 && $0=="---"{f=1; next} f && $0=="---"{exit} f' "$1"
 }
 
+# --- shared frontmatter rules (checks 4 / 4b / 4d) ---------------------------
+# Single definitions: the pack loop and the repo-local .claude/ surface must
+# enforce the same bar — fix a rule here, not in per-call copies.
+check_skill_md() {
+  local skill_md="$1" sdir fm name
+  sdir="$(basename "$(dirname "$skill_md")")"
+  fm="$(frontmatter "$skill_md")"
+
+  if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$skill_md"; then
+    err "$skill_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
+  fi
+
+  name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
+  if [ "$name" != "$sdir" ]; then
+    err "$skill_md: frontmatter name='$name' != directory '$sdir'"
+  fi
+
+  if ! printf '%s\n' "$fm" | grep -q '^description:'; then
+    err "$skill_md: no description in frontmatter"
+  elif ! printf '%s\n' "$fm" | grep -q 'Triggers:'; then
+    err "$skill_md: description lacks 'Triggers:' (the auto-selection surface)"
+  fi
+
+  if ! printf '%s\n' "$fm" | grep -q '^model:'; then
+    note "$skill_md: no model pin (intended main-session skill? otherwise pin one)"
+  fi
+}
+
+check_agent_md() {
+  local agent_md="$1" afile afm aname desc_lines
+  afile="$(basename "$agent_md" .md)"
+  afm="$(frontmatter "$agent_md")"
+
+  if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$agent_md"; then
+    err "$agent_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
+  fi
+
+  aname="$(printf '%s\n' "$afm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
+  if [ "$aname" != "$afile" ]; then
+    err "$agent_md: frontmatter name='$aname' != file '$afile'"
+  fi
+
+  if ! printf '%s\n' "$afm" | grep -q '^description:'; then
+    err "$agent_md: no description in frontmatter"
+  else
+    desc_lines="$(printf '%s\n' "$afm" | awk '/^description:/{d=1; n++; next} d && /^[a-z-]+:/{exit} d{n++} END{print n+0}')"
+    if [ "$desc_lines" -gt 10 ]; then
+      err "$agent_md: description spans $desc_lines lines — it is always-loaded context; compress to a trigger summary"
+    fi
+    if ! printf '%s\n' "$afm" | grep -q 'Triggers:'; then
+      err "$agent_md: description lacks 'Triggers:' (the auto-selection surface)"
+    fi
+  fi
+
+  if ! printf '%s\n' "$afm" | grep -q '^model:'; then
+    err "$agent_md: no model pin (an unpinned agent inherits the main-session model)"
+  fi
+  if ! printf '%s\n' "$afm" | grep -q '^tools:'; then
+    note "$agent_md: no tools: in frontmatter (inherits ALL tools — pin the minimal set)"
+  fi
+}
+
 # --- 1. marketplace.json is valid JSON --------------------------------------
 if ! jq empty "$marketplace" 2>/dev/null; then
   err "$marketplace is not valid JSON"
@@ -118,71 +184,45 @@ while IFS=$'\t' read -r pack source mp_version; do
   if [ -d "$skills_dir" ]; then
     for skill_md in "$skills_dir"/*/SKILL.md; do
       [ -e "$skill_md" ] || continue
-      sdir="$(basename "$(dirname "$skill_md")")"
-      fm="$(frontmatter "$skill_md")"
-
-      if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$skill_md"; then
-        err "$skill_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
-      fi
-
-      name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
-      if [ "$name" != "$sdir" ]; then
-        err "$skill_md: frontmatter name='$name' != directory '$sdir'"
-      fi
-
-      if ! printf '%s\n' "$fm" | grep -q '^description:'; then
-        err "$skill_md: no description in frontmatter"
-      elif ! printf '%s\n' "$fm" | grep -q 'Triggers:'; then
-        err "$skill_md: description lacks 'Triggers:' (the auto-selection surface)"
-      fi
-
-      if ! printf '%s\n' "$fm" | grep -q '^model:'; then
-        note "$skill_md: no model pin (intended main-session skill? otherwise pin one)"
-      fi
+      check_skill_md "$skill_md"
     done
     ok "pack '$pack': skills frontmatter checked"
   fi
 
   # 4b. per-agent frontmatter — an agent's description is loaded into EVERY
   # session's system prompt, so it is checked as strictly as a skill's:
-  # name matches the file, description present and lean, model pinned
-  # (agents have no main-session exemption), tools explicit (omitting
-  # `tools:` inherits ALL tools, over-privileging advisory agents).
+  # name matches the file, description present, lean, and carrying Triggers:
+  # (the auto-selection surface), model pinned (agents have no main-session
+  # exemption), tools explicit (omitting `tools:` inherits ALL tools,
+  # over-privileging advisory agents).
   agents_dir="$dir/agents"
   if [ -d "$agents_dir" ]; then
     for agent_md in "$agents_dir"/*.md; do
       [ -e "$agent_md" ] || continue
-      afile="$(basename "$agent_md" .md)"
-      afm="$(frontmatter "$agent_md")"
-
-      if [ "$have_yaml" -eq 1 ] && ! frontmatter_yaml_ok "$agent_md"; then
-        err "$agent_md: frontmatter is not valid YAML (unquoted ': ' in description? quote the value)"
-      fi
-
-      aname="$(printf '%s\n' "$afm" | sed -n 's/^name:[[:space:]]*//p' | head -1)"
-      if [ "$aname" != "$afile" ]; then
-        err "$agent_md: frontmatter name='$aname' != file '$afile'"
-      fi
-
-      if ! printf '%s\n' "$afm" | grep -q '^description:'; then
-        err "$agent_md: no description in frontmatter"
-      else
-        desc_lines="$(printf '%s\n' "$afm" | awk '/^description:/{d=1; n++; next} d && /^[a-z-]+:/{exit} d{n++} END{print n+0}')"
-        if [ "$desc_lines" -gt 10 ]; then
-          err "$agent_md: description spans $desc_lines lines — it is always-loaded context; compress to a trigger summary"
-        fi
-      fi
-
-      if ! printf '%s\n' "$afm" | grep -q '^model:'; then
-        err "$agent_md: no model pin (an unpinned agent inherits the main-session model)"
-      fi
-      if ! printf '%s\n' "$afm" | grep -q '^tools:'; then
-        note "$agent_md: no tools: in frontmatter (inherits ALL tools — pin the minimal set)"
-      fi
+      check_agent_md "$agent_md"
     done
     ok "pack '$pack': agents frontmatter checked"
   fi
 done < <(jq -r '.plugins[] | [.name, .source, .version] | @tsv' "$marketplace")
+
+# --- 4d. repo-local maintainer surface (.claude/) ----------------------------
+# The maintainer agent team and its orchestration skill live outside the packs
+# (they are not distributed), but they answer to the same frontmatter rules —
+# the quality tools go through the gate too.
+if [ -d ".claude/skills" ]; then
+  for skill_md in .claude/skills/*/SKILL.md; do
+    [ -e "$skill_md" ] || continue
+    check_skill_md "$skill_md"
+  done
+  ok ".claude/skills: frontmatter checked"
+fi
+if [ -d ".claude/agents" ]; then
+  for agent_md in .claude/agents/*.md; do
+    [ -e "$agent_md" ] || continue
+    check_agent_md "$agent_md"
+  done
+  ok ".claude/agents: frontmatter checked"
+fi
 
 # --- 5. cross-reference integrity -------------------------------------------
 # Descriptions name sibling skills as "For X use /pack:name instead" — the
