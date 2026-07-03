@@ -1,6 +1,6 @@
 ---
 name: migration-assistant
-description: New machine migration assistant agent. Interactively supports from macOS initial setup to dotfiles application and data migration.
+description: "New machine migration assistant agent. Interactively supports from macOS initial setup to dotfiles application and data migration. Triggers: new Mac setup, machine migration, macOS移行, dotfiles setup"
 tools: Bash, Read, Grep, Glob, WebFetch
 model: sonnet
 ---
