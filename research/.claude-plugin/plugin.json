@@ -1,7 +1,7 @@
 {
   "name": "research",
   "description": "Research pack: arxiv-ai-researcher (AI/ML paper discovery & synthesis), gemini-api-researcher (Gemini API capabilities & usage), huggingface-spaces-researcher (HF Spaces/model discovery), and verify-subagent-result (cross-validation of mid-confidence subagent findings). Role-agnostic research tooling for anyone investigating AI/ML papers, APIs, and models.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": { "name": "snkrheadz" },
   "license": "MIT"
 }

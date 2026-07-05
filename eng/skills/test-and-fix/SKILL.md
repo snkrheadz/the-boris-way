@@ -61,10 +61,26 @@ If `--dry-run`: show proposed fixes without applying, then stop.
 
 After applying fixes, go back to Step 2. Track the loop count.
 
+Before reporting success, run the self-check in Step 4.5.
+
 If loop count reaches 3 and tests still fail → report failure with:
 1. Remaining errors in detail
 2. File locations requiring manual fix
 3. Fix hints
+
+## Step 4.5: Self-check the fixes (before any success report)
+
+A repair loop's failure mode is making red turn green without fixing anything.
+`git diff` your own fixes and confirm none of these fake-done shortcuts appear:
+
+- **Weakened tests** — an assertion loosened, deleted, or skipped so the failure disappears
+- **Pass-by-mock** — a test now mocks the very thing it claims to verify
+- **Stub returns** — a hardcoded value that satisfies the failing test and nothing else
+- **Swallowed errors** — a catch/except added that silences the failure instead of handling it
+- **Scope creep** — changes beyond the Step 3 auto-fix scope
+
+If any appear, revert that fix and either address the root cause or report the test
+as needing manual work — a fabricated green is worse than an honest red.
 
 ## Step 5: Report
 
