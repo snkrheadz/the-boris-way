@@ -4,7 +4,7 @@ description: "Produce any deliverable at frontier quality: rubric before artifac
 argument-hint: "[deliverable] [quick|full|gate]"
 user-invocable: true
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
-model: inherit
+model: opus
 context: fork
 metadata:
   source: apoorvjain25/frontier
@@ -159,8 +159,12 @@ fallback path to a bare Judge-1 prompt.
 After two clean passes, run ONE pass of the `craft:taste-judge` agent (pinned to
 `model: opus` by default; override to a stronger tier explicitly if the calling session's
 plan offers one — the pin exists so cost/quality is a deliberate choice, never an accident).
-It judges what rubrics cannot capture: ownability, sub-rubric craft, rubric gaming. Fix its
-findings, re-gate once.
+If the calling session's plan has no access to `opus`, override the invocation to the
+strongest tier that plan does offer; the fresh context and lens structure still carry the
+gate even on a weaker model. It judges what rubrics cannot capture: ownability, sub-rubric
+craft, rubric gaming — NOT structural code correctness (module boundaries, coupling,
+contract-breaking changes); for that, use `eng:architecture-reviewer` instead, before or
+alongside the taste gate. Fix its findings, re-gate once.
 
 **Bank its DISTILL lines into this project's `tasks/craft-standards/<domain>.md`** (create the
 directory/file if it does not exist yet; ask before creating it if the project has no

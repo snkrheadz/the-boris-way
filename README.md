@@ -158,12 +158,17 @@ Skills (6): `/spec:scan` (audit agent-readiness → ROI-ranked intent backlog),
 `/spec:tasks` (ordered, independently-verifiable tasks), `/spec:implement` (implement with
 running notes), `/spec:review` (isolated-context adversarial review before the PR gate).
 Self-contained: bundles the implement phase and the portable audit rubric. See
-[spec/README.md](spec/README.md) for the full guide.
+[spec/README.md](spec/README.md) for the full guide. For structural acceptance-criteria
+review on a spec-tracked change, `/spec:review` is the gate; for craft-quality authoring
+and polish on any deliverable (spec-tracked or not), use **craft** below instead.
 
 #### Craft / quality-authoring (role-agnostic, optional)
 
 For any deliverable that must be excellent — code, UI, copy, design, research, prompts,
-decks, and 14 more domains — any role can add it.
+decks, and 14 more domains — any role can add it. Pairs with **spec**: use `/spec:review`
+to gate a spec-tracked change's acceptance criteria and structural correctness; use
+`/craft:produce` for the craft-quality authoring pass itself, on that change or anything
+else.
 
 ```
 /plugin install craft@the-boris-way

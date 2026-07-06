@@ -27,7 +27,7 @@ Escalate only as far as the work demands; the difference is who holds the plan.
 - **Skill** — a repeatable in-context procedure with no fan-out. Cheapest; prefer it
   before spinning up agents.
 - **Subagent** (`Agent`) — one focused task in its own context (research, a scoped edit,
-  one file's analysis). The default for delegation.
+  one file's analysis). Reach for this when no matching skill exists.
 - **Agent Team** — a lead supervising long-lived peers over a shared task list. Use when
   work needs coordination across roles.
 - **Dynamic Workflow** (`Workflow`, via the `ultracode` keyword) — deterministic fan-out
