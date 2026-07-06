@@ -27,7 +27,7 @@
       "name": "eng",
       "source": "./eng",
       "description": "Engineering workflow pack that fills gaps the official commands don't cover: create-pr, new-skill, prune-redundant-skills, review-inbox, test-and-fix, refactor-swarm, techdebt, trace-dataflow, db-query, plus code-architect, architecture-reviewer, verify-shell, migration, oncall and AWS/GCP advisor agents.",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "author": {
         "name": "snkrheadz"
       }
@@ -36,7 +36,7 @@
       "name": "research",
       "source": "./research",
       "description": "Research pack: arxiv-ai-researcher, gemini-api-researcher, huggingface-spaces-researcher and verify-subagent-result agents for AI/ML paper, API and model discovery plus cross-validation of subagent findings. Role-agnostic — for anyone investigating AI/ML papers, APIs and models.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "snkrheadz"
       }

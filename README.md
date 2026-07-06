@@ -110,7 +110,8 @@ Agents (4): `arxiv-ai-researcher` (paper discovery & synthesis),
 `huggingface-spaces-researcher` (HF Spaces / model discovery),
 `verify-subagent-result` (cross-validates subagent findings against independent
 sources — invoke it explicitly when you judge a result mid-confidence, roughly
-50–69/100; nothing emits that score automatically).
+50–69/100; nothing emits that score automatically. Also audits an implementation
+subagent's completion claim against its actual diff via a fake-done checklist).
 
 #### Strategy (role-agnostic, optional)
 
