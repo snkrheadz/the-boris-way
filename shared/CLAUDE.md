@@ -22,20 +22,20 @@ micromanagement; trust the model and keep this file minimal.
 - If an approach goes sideways, stop and re-think rather than pushing a failing path.
 
 
-## 2. Orchestration: subagent → skill → team → workflow
+## 2. Orchestration: skill → subagent → team → workflow
 Escalate only as far as the work demands; the difference is who holds the plan.
-- **Subagent** (`Agent`) — one focused task in its own context (research, a scoped edit,
-  one file's analysis). The default for delegation.
 - **Skill** — a repeatable in-context procedure with no fan-out. Cheapest; prefer it
   before spinning up agents.
+- **Subagent** (`Agent`) — one focused task in its own context (research, a scoped edit,
+  one file's analysis). Reach for this when no matching skill exists.
 - **Agent Team** — a lead supervising long-lived peers over a shared task list. Use when
   work needs coordination across roles.
 - **Dynamic Workflow** (`Workflow`, via the `ultracode` keyword) — deterministic fan-out
   with verify gates. Use for breadth one context can't hold: codebase-wide audit,
   migration over many sites, adversarial review.
 
-**Rule:** plan fits in 2–3 steps → subagent or skill; coordinated multi-role → Team;
-wide fan-out + verify/synthesize → Workflow.
+**Rule:** a matching skill → use it; otherwise, plan fits in 2–3 steps → subagent;
+coordinated multi-role → Team; wide fan-out + verify/synthesize → Workflow.
 
 - **Web fan-out is serial, not parallel.** Many concurrent `WebFetch` calls or parallel
   research subagents against one host trip CDN rate limits and bot detection, which
@@ -58,7 +58,8 @@ wide fan-out + verify/synthesize → Workflow.
 
 ## 3. Self-improvement & memory
 - **User correction → a project `tasks/lessons.md`** (record the pattern *and the why*).
-- **Discovered preference → auto-memory** (`~/.claude/memory/`, let Claude Code manage it).
+- **Discovered preference → auto-memory** (`~/.claude/projects/<project>/memory/`, let
+  Claude Code manage it).
 - Review `tasks/lessons.md` at session start for the active project.
 
 
@@ -87,11 +88,9 @@ behave?"*
   empty, migration complete). Bounded work with a measurable end.
 - **`/loop [interval] <prompt>`** — fixed interval, or no interval to self-pace. For an
   interactive, in-session watch/maintain pass.
-- **`autoresearch`** — metric-driven modify→verify→keep/discard search. Use when `/goal`
-  is too thin (you need scoring and reverting bad attempts).
 
 **Rule:** unattended & recurring → routine; verifiable end condition → `/goal`;
-in-session observe/maintain → `/loop`; metric + keep/discard → `autoresearch`.
+in-session observe/maintain → `/loop`.
 
 
 ---
