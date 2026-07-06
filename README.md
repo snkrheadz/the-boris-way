@@ -159,6 +159,30 @@ running notes), `/spec:review` (isolated-context adversarial review before the P
 Self-contained: bundles the implement phase and the portable audit rubric. See
 [spec/README.md](spec/README.md) for the full guide.
 
+#### Craft / quality-authoring (role-agnostic, optional)
+
+For any deliverable that must be excellent — code, UI, copy, design, research, prompts,
+decks, and 14 more domains — any role can add it.
+
+```
+/plugin install craft@the-boris-way
+```
+
+Skills (1): `/craft:produce` — rubric before artifact, best-of-N candidates for creative
+work, fresh-eyes verify sweeps, and a taste gate, in three modes (`quick` one judged pass,
+`full` convergence loop + gate, `gate` judge existing work only). Agents (2): `verifier`
+(pinned `model: sonnet` — cheap, runs many times per sweep), `taste-judge` (pinned
+`model: opus` — runs once, at the highest-stakes point; override to a stronger tier
+explicitly when the calling session offers one). Backed by 21 domain craft standards
+(design, motion, writing, code, research, prompting, product, data, security, ops, media,
+marketing, decisions, sales, teaching, management, storytelling, academic, career,
+translation, coordination), each a numbered rubric + ban list + verification checklist.
+DISTILL findings (taste judgments the gate converts into reusable rules) are banked into
+the consuming project's own `tasks/craft-standards/<domain>.md` — never into this pack's
+bundled craft files, which are shared across every consumer and would be clobbered on
+update. Derived from [apoorvjain25/frontier](https://github.com/apoorvjain25/frontier)
+(Apoorv Jain); MIT.
+
 #### Marketer / Designer
 
 These roles are served almost entirely by **official Anthropic plugins** — we no longer
@@ -259,7 +283,7 @@ Now everyone is "same environment, immediately."
 
 ```
 the-boris-way/
-├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec)
+├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec, craft)
 ├── .claude/                          # maintainer agent team + maintenance loop (not distributed)
 ├── CLAUDE.md                         # maintainer's map (auto-loaded when working ON this repo)
 ├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
@@ -276,6 +300,7 @@ the-boris-way/
 ├── strategy/                         # AI-era personal strategy (career / industry / opportunity)
 ├── writing/                          # de-AI-ify drafts (stop-ai-slop-jp / -en)
 ├── spec/                             # spec-driven pipeline (scan → … → review)
+├── craft/                            # quality-authoring (produce skill + verifier/taste-judge agents)
 └── shared/CLAUDE.md                  # philosophy for distribution (Channel B)
 ```
 

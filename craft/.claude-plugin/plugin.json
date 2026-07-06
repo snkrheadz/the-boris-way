@@ -1,0 +1,9 @@
+{
+  "name": "craft",
+  "description": "Quality-authoring pack: rubric before artifact, best-of-N candidates, fresh-eyes verify sweeps, and a taste gate, backed by 21 domain craft standards (design, motion, writing, code, research, prompting, product, data, security, ops, media, marketing, decisions, sales, teaching, management, storytelling, academic, career, translation, coordination). Derived from apoorvjain25/frontier (MIT).",
+  "version": "0.1.0",
+  "author": {
+    "name": "snkrheadz"
+  },
+  "license": "MIT"
+}
