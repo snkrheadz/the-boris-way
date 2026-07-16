@@ -50,6 +50,7 @@ What Core ships (role-agnostic):
 - `life-decision` — think through a big personal decision under Helpful/Honest/Harmless principles
 - `teach-session` — teach back the work just done (great for onboarding)
 - `tune-claude-md` — tune any repo's CLAUDE.md the Boris way: drive the rubric score up, then cut what the model already knows, split auto vs on-demand, route the 4 channels
+- `promote-to-code` — move a repo's deterministic prose rules out of CLAUDE.md into an enforcement mechanism (hook / CI / verify script); a bundled `audit.sh` detects candidates, the skill makes the promotion judgement and deletes the prose in the same change
 - `html-output` — emit specs / reviews / reports as rich HTML
 - `pre-tool-guard` hook — block access to sensitive files (defense in depth)
 
@@ -295,8 +296,8 @@ the-boris-way/
 ├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
 ├── core/                             # role-agnostic plugin
 │   ├── .claude-plugin/plugin.json
-│   ├── skills/                       # first-principles, honest-reasoning, deep-thinking,
-│   │                                 #   life-decision, teach-session, tune-claude-md, html-output
+│   ├── skills/                       # first-principles, honest-reasoning, deep-thinking, life-decision,
+│   │                                 #   teach-session, tune-claude-md, promote-to-code, html-output
 │   └── hooks/                        # pre-tool-guard.sh + hooks.json
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
