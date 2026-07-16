@@ -8,7 +8,7 @@
     {
       "name": "core",
       "source": "./core",
-      "description": "Cross-role foundation for everyone: first-principles + honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, rich HTML output, a CLAUDE.md tuner (Boris-way), and a sensitive-file guard hook. Install this first, whatever your role.",
+      "description": "Cross-role foundation for everyone: first-principles + honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, rich HTML output, a CLAUDE.md tuner and a prose-rule-to-enforcement promoter (Boris-way), and a sensitive-file guard hook. Install this first, whatever your role.",
       "version": "0.8.0",
       "author": {
         "name": "snkrheadz"
