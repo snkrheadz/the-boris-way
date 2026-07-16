@@ -59,6 +59,12 @@ cat > "$D/CLAUDE.md" <<EOF
 - You must never push to main directly.
 - Secrets are validated by validate-shell.sh before commit.
 
+| validate-shell.sh | shellcheck runner |
+│   └── hooks/          # validate-shell.sh lives here
+\`\`\`text
+wired: validate-shell.sh
+\`\`\`
+
 \`\`\`bash
 bash scripts/verify.sh   # closing gate
 \`\`\`
@@ -77,11 +83,22 @@ cat > "$D/.claude/settings.json" <<'EOF'
       { "hooks": [ { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-shell.sh\"" } ] }
     ],
     "PreToolUse": [
-      { "hooks": [ { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/gone.sh\"" } ] }
+      { "hooks": [ { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/gone.sh\"" } ] },
+      { "hooks": [ { "type": "command", "command": "~/.claude/hooks/home-bad.sh" } ] }
     ]
   }
 }
 EOF
+# A ~-wired hook (dotfiles style): repo ships the source at claude/hooks/,
+# settings.json points at the post-install home path. The source is present
+# but NOT executable, so a resolving C6 must flag it — a skipping C6 cannot.
+mkdir -p "$D/claude/hooks"
+cat > "$D/claude/hooks/home-bad.sh" <<'EOF'
+#!/usr/bin/env bash
+echo home
+EOF
+# (deliberately no chmod +x)
+
 # A CI workflow that does NOT mention verify.sh → C5 parity miss.
 cat > "$D/.github/workflows/main.yml" <<'EOF'
 name: ci
@@ -103,8 +120,12 @@ check "dirty: C6 FAIL (missing wired hook)" \
   "$(printf '%s' "$dirty_out" | grep -E 'FAIL +C6' >/dev/null && echo x)"
 check "dirty: unparseable date did NOT create a spurious extra C1 FAIL" \
   "$([ "$(printf '%s' "$dirty_out" | grep -cE 'FAIL +C1')" -eq 1 ] && echo x)"
-check "dirty: C6 still resolved the healthy hook (validate-shell.sh not flagged missing)" \
+check "dirty: C6 flags the missing wired hook (gone.sh MISSING)" \
   "$(printf '%s' "$dirty_out" | grep -q 'MISSING: .claude/hooks/gone.sh' && echo x)"
+check "dirty: C6 does not flag the healthy hook (validate-shell.sh clean)" \
+  "$(printf '%s' "$dirty_out" | grep -qE '(MISSING|NOT-EXEC|SHELLCHECK-FAIL)[^]]*validate-shell\.sh' || echo x)"
+check "dirty: C6 resolves a ~-wired hook to its repo source (home-bad.sh NOT-EXEC)" \
+  "$(printf '%s' "$dirty_out" | grep -q 'NOT-EXEC: claude/hooks/home-bad.sh' && echo x)"
 check "dirty: claude/CLAUDE.md is scanned (expired rule there raises a C1 candidate)" \
   "$(printf '%s' "$dirty_out" | awk 'f{print} /^---CANDIDATES---$/{f=1}' | grep -E '^C1'$'\t''claude/CLAUDE.md' | grep -q 'Legacy quirk' && echo x)"
 
@@ -113,6 +134,8 @@ cands="$(printf '%s' "$dirty_out" | awk 'f{print} /^---CANDIDATES---$/{f=1}')"
 check "dirty: C1 candidate row emitted" "$(contains "$cands" "$(printf 'C1\t')")"
 check "dirty: C2 candidate row (prose names wired validate-shell.sh)" \
   "$(printf '%s' "$cands" | grep -E '^C2'$'\t' | grep -q 'validate-shell.sh' && echo x)"
+check "dirty: C2 skips doc-shaped mentions (table/tree/fence) — prose row is the only one" \
+  "$([ "$(printf '%s' "$cands" | grep -E '^C2'$'\t' | grep -c 'validate-shell.sh')" -eq 1 ] && echo x)"
 check "dirty: C4 candidate row (imperative prose)" "$(contains "$cands" "$(printf 'C4\t')")"
 check "dirty: C5 candidate row (verify.sh gate not in CI)" \
   "$(printf '%s' "$cands" | grep -E '^C5'$'\t' | grep -q 'verify.sh' && echo x)"

@@ -74,6 +74,21 @@ add_cand() {
   CAND+=("$1"$'\t'"$rel"$'\t'"$3"$'\t'"$exc")
 }
 
+# ── prose extraction ────────────────────────────────────────────────────────
+# Emit "lineno:content" for PROSE lines only: fenced code blocks, table rows,
+# and tree-diagram lines are documentation shape, not rules. Scanning them is
+# what made C2 flag every file-map mention of a wired script (10/10 false
+# positives on the dogfood target); rule prose never lives in those shapes.
+prose_lines() {
+  awk '
+    /^[[:space:]]*```/ { infence = !infence; next }
+    infence            { next }
+    /^[[:space:]]*\|/  { next }
+    /[├└│]/            { next }
+    { printf "%d:%s\n", NR, $0 }
+  ' "$1" 2>/dev/null
+}
+
 # ── the markdown surface scanned by C1/C2/C4 ────────────────────────────────
 # Root CLAUDE.md plus every *.md under .claude/. Nothing else is prose-rule
 # territory.
@@ -185,19 +200,23 @@ check_c2() {
     record "C2 double-bookkeeping" "PASS" "settings wire no *.sh scripts"
     return
   fi
-  local hits=0 name f line lineno content
-  while IFS= read -r name; do
-    [ -n "$name" ] || continue
-    for f in "${MD_FILES[@]}"; do
+  local hits=0 name f line lineno content pl
+  for f in "${MD_FILES[@]}"; do
+    # One prose pass per file (fences/tables/trees excluded up front), then
+    # every wired name is matched against that stream — not the raw file.
+    pl="$(prose_lines "$f")"
+    [ -n "$pl" ] || continue
+    while IFS= read -r name; do
+      [ -n "$name" ] || continue
       while IFS= read -r line; do
         [ -n "$line" ] || continue
         lineno="${line%%:*}"
         content="${line#*:}"
         hits=$((hits + 1))
         add_cand "C2" "$f" "$lineno" "prose names wired '$name': $content"
-      done < <(grep -nF "$name" "$f" 2>/dev/null)
-    done
-  done <<< "$names"
+      done < <(grep -F "$name" <<< "$pl" 2>/dev/null)
+    done <<< "$names"
+  done
   if [ "$hits" -gt 0 ]; then
     record "C2 double-bookkeeping" "WARN" "$hits prose mention(s) of already-wired scripts"
   else
@@ -231,7 +250,7 @@ check_c4() {
       content="${line#*:}"
       hits=$((hits + 1))
       add_cand "C4" "$f" "$lineno" "$content"
-    done < <(grep -niE "$kw" "$f" 2>/dev/null)
+    done < <(prose_lines "$f" | grep -iE "$kw" 2>/dev/null)
   done
   if [ "$hits" -gt 0 ]; then
     record "C4 rule-candidates" "WARN" "$hits imperative line(s) — skill judges which are enforceable"
@@ -298,7 +317,7 @@ check_c6() {
     return
   fi
 
-  local ok=0 failed=0 skipped=0 cmd path details=""
+  local ok=0 failed=0 skipped=0 cmd path details="" bn matches
   while IFS= read -r cmd; do
     [ -n "$cmd" ] || continue
     # Extract the first *.sh token — hook commands carry an interpreter and
@@ -320,12 +339,22 @@ check_c6() {
         continue
         ;;
       '~'*)
-        # A ~-rooted path is the post-install home location (often a symlink
-        # back into the repo). It only exists after install.sh, so its absence
-        # from a bare checkout is not a broken repo-local hook — SKIP.
-        skipped=$((skipped + 1))
-        details+=" [skip: home path (post-install), not repo-local: $path]"
-        continue
+        # A ~-rooted path is the post-install home location; dotfiles-style
+        # repos ship the source in-repo and symlink it home at install time —
+        # it is how the dogfood target wires EVERY hook, so skipping here
+        # would leave the hooks that most need auditing unverified. Resolve
+        # by unique basename among repo files; none or ambiguous → SKIP.
+        bn="$(basename "$path")"
+        matches="$(find "$REPO" \
+          \( -type d \( -name worktrees -o -name .git -o -name node_modules \) -prune \) \
+          -o \( -type f -name "$bn" -print \) 2>/dev/null)"
+        if [ "$(printf '%s\n' "$matches" | grep -c .)" -eq 1 ]; then
+          path="$matches"
+        else
+          skipped=$((skipped + 1))
+          details+=" [skip: home path with no unique repo source: $path]"
+          continue
+        fi
         ;;
       /*)
         # Absolute path outside the repo tree — not verifiable against this
