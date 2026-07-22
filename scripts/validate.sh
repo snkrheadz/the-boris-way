@@ -31,8 +31,9 @@
 #   5. Every "/pack:name" cross-reference into a LOCAL pack resolves to a real
 #      skill (external-marketplace refs are skipped).
 #   6. shellcheck on every *.sh file, if shellcheck is available.
-#   6b. Every skill-bundled self-test (*/skills/*/scripts/*_test.sh) passes —
-#      found by glob, so a new skill's tests gate automatically.
+#   6b. Every skill-bundled self-test (*/skills/*/scripts/*_test.sh) and every
+#      hook behavior suite (*/hooks/*_test.sh) passes — found by glob, so a
+#      new skill's or hook's tests gate automatically.
 #   7. Every skill AND agent on disk is documented in README.md
 #      (catalog-drift guard). Maintainer agents under .claude/agents/ are not
 #      consumer-facing, so their home doc is CLAUDE.md instead.
@@ -286,19 +287,20 @@ else
   note "shellcheck absent — skipped shell static analysis"
 fi
 
-# --- 6b. skill-bundled self-tests (behavioral, not just static) --------------
-# Any skill may ship scripts/*_test.sh next to its scripts; the gate runs them
-# all by glob so a new skill's tests are picked up automatically — never a
-# hand-list that can silently omit one (that omission is exactly how
-# promote-to-code's 18-case self-test shipped without ever gating anything).
+# --- 6b. bundled self-tests: skills + hooks (behavioral, not just static) ----
+# Any skill may ship scripts/*_test.sh next to its scripts, and any hook pack
+# may ship <hook>_test.sh next to its hooks; the gate runs them all by glob so
+# new tests are picked up automatically — never a hand-list that can silently
+# omit one (that omission is exactly how promote-to-code's 18-case self-test
+# shipped without ever gating anything).
 while IFS= read -r t; do
   [ -n "$t" ] || continue
   if bash "$t" >/dev/null 2>&1; then
-    ok "skill self-test: $t"
+    ok "self-test: $t"
   else
-    err "skill self-test failed: $t (run 'bash $t' to see the cases)"
+    err "self-test failed: $t (run 'bash $t' to see the cases)"
   fi
-done < <(find . -path ./.git -prune -o -type f -path '*/skills/*/scripts/*_test.sh' -print 2>/dev/null | sort)
+done < <(find . -path ./.git -prune -o -type f \( -path '*/skills/*/scripts/*_test.sh' -o -path '*/hooks/*_test.sh' \) -print 2>/dev/null | sort)
 
 # --- 7. README ↔ catalog drift ----------------------------------------------
 # README.md advertises each pack's skills by hand. Every skill on disk must be

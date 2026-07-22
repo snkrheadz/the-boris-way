@@ -54,6 +54,10 @@ What Core ships (role-agnostic):
 - `context-audit` — audit a repo's `.claude/` context against the pack's evolving `principles.md` (does verification auto-fire? are green gates checked for weakening? are must-not-skip rules hooks?); reports gaps with evidence and routes each fix to `tune-claude-md` / `promote-to-code`
 - `html-output` — emit specs / reviews / reports as rich HTML
 - `pre-tool-guard` hook — block access to sensitive files (defense in depth)
+- `stop-verify-gate` hook — when a session edited files but never ran the repo's
+  `scripts/verify.sh` closing gate, block the stop ONCE and ask for the gate to be run
+  (the correctness counterpart to the permission classifier's intent guard). A repo opts
+  in simply by having `scripts/verify.sh`; repos without one never see it fire
 
 ### 3. Install role packs
 
@@ -86,8 +90,8 @@ Skills (1): `task-definition-sheet` — the 業務定義シート (task definiti
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (9): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
-  `test-and-fix` `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
+- Skills (10): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
+  `test-and-fix` `verify-work` `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
 - Agents (8): `code-architect` `architecture-reviewer` `verify-shell`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
@@ -225,6 +229,9 @@ Use the official commands directly:
 
 The `eng` pack's `review-inbox` builds **on top of** `/code-review` (it triages the PRs where
 you are the requested reviewer and posts human-confirmed comments), rather than replacing it.
+Likewise `verify-work` does not replace `/verify`: `/verify` drives the app to observe a
+change working, while `verify-work` runs the repo's own `scripts/verify.sh` closing gate and
+judges the diff for weakened tests/checks (pairing with core's `stop-verify-gate` hook).
 
 ---
 
@@ -299,7 +306,7 @@ the-boris-way/
 │   ├── .claude-plugin/plugin.json
 │   ├── skills/                       # first-principles, honest-reasoning, deep-thinking, life-decision,
 │   │                                 #   teach-session, tune-claude-md, promote-to-code, context-audit, html-output
-│   └── hooks/                        # pre-tool-guard.sh + hooks.json
+│   └── hooks/                        # pre-tool-guard.sh + stop-verify-gate.sh (+ tests) + hooks.json
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
