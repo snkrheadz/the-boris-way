@@ -26,7 +26,7 @@ claude plugin validate .      # authoritative catalog check (also run inside val
 <pack>/.claude-plugin/plugin.json # per-pack manifest: name + description + version
 <pack>/skills/<name>/SKILL.md     # skills are AUTO-DISCOVERED from here — not enumerated anywhere
 <pack>/agents/<name>.md           # agents, same idea
-core/hooks/                       # pre-tool-guard.sh + hooks.json (the only hook pack)
+core/hooks/                       # pre-tool-guard.sh + stop-verify-gate.sh (+ *_test.sh) + hooks.json (the only hook pack)
 .claude/agents/                   # maintainer team (NOT distributed): gap-analyst / quality / ops
 .claude/skills/                   # /maintain-marketplace — the loop that runs the team
 shared/CLAUDE.md                  # DISTRIBUTED philosophy (payload, not for this repo)
