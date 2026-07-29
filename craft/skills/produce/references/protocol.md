@@ -4,7 +4,7 @@ How to get frontier-quality results from any capable model, on any task: code, c
 development, audit, graphics, animation, motion, effects, prompts, APIs, connectors, UI, UX,
 features, pages, marketing, writing, research, market analysis, anything.
 
-v1.1, 2026-07-03.
+v1.2, 2026-07-29.
 
 ---
 
@@ -264,14 +264,20 @@ When a curated library of best-in-class design references is available to you, s
 
 ---
 
-## 6. Model tuning notes (Claude Opus 4.8, current as of 2026-07)
+## 6. Model tuning notes (Claude Opus 5, current as of 2026-07)
 
 When YOU are Opus (or when building prompts that run on Opus), these are the known levers:
 
 - Opus follows instructions literally and does not generalize scope. State scope explicitly
   ("apply to every section, not just the first").
-- Opus under-reaches for subagents, file memory, and custom tools by default. This protocol
-  explicitly instructs their use (Sections 3, 4); follow it rather than defaulting to solo work.
+- Opus 5 self-verifies without being told and can expand task scope on its own. Don't add
+  ad-hoc "double-check your answer" phrasing on top of this protocol's structured verify
+  sweeps — they stack into over-verification; and state the deliverable's scope explicitly
+  so it isn't quietly widened.
+- Subagent direction flipped from 4.8: Opus 5 reaches for subagents readily, and free-form
+  delegation multiplies cost. Run this protocol's bounded verifier/judge passes as written —
+  don't add extra delegation on top. File memory and custom tools still benefit from explicit
+  "use this when..." trigger conditions.
 - Review and audit prompts: Opus obeys "only report important issues" literally and recall drops.
   Always use coverage-first reporting (Section 2), filter downstream.
 - Opus has a persistent default design taste (cream or off-white around #F4F1EA, serif display
@@ -281,10 +287,14 @@ When YOU are Opus (or when building prompts that run on Opus), these are the kno
   use cream" instructions just shift the default; concrete hex values and named fonts work.
 - For creative variety (no temperature parameter exists on Opus 4.7+): propose 3-4 distinct
   directions with concrete values, pick or ask, then implement only the winner.
-- API calls: `claude-opus-4-8`, `thinking: {type: "adaptive"}`, `output_config.effort` of `high`
-  by default and `xhigh` for the hardest coding and agentic work, streaming for long outputs,
-  structured outputs via `output_config.format` (never prefills), cache the stable prompt prefix
-  (this protocol and the craft file go first; the volatile task goes last).
+- API calls: `claude-opus-5` (same $5/$25 as 4.8). Thinking is on by default — omit `thinking`
+  or pass `{type: "adaptive"}`; `{type: "disabled"}` 400s above effort `high`.
+  `output_config.effort` of `high` by default and `xhigh` for the hardest coding and agentic
+  work — but sweep downward: `low`/`medium` punch above their weight on Opus 5. Streaming for
+  long outputs, structured outputs via `output_config.format` (never prefills), cache the stable
+  prompt prefix (this protocol and the craft file go first; the volatile task goes last).
+  Handle `stop_reason: "refusal"` — Opus 5 carries cyber safety classifiers (recommended
+  fallback: `claude-opus-4-8`).
 
 ---
 
