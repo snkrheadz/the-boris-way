@@ -38,8 +38,9 @@ features that ship.
 - **Checklists, enumerated:** "check dimensions 1-8, output a verdict per dimension" works;
   "check everything carefully" does not.
 - **Tool triggering:** describe WHEN to use each tool ("call search when the answer depends on
-  facts newer than training"), not just what it does. Same for subagents and memory: current Opus
-  under-reaches for them unless told when.
+  facts newer than training"), not just what it does. Same for memory. Subagents are the
+  exception on Opus 5: it over-delegates by default — bound and cap delegation instead of
+  encouraging it.
 - **Position is leverage:** the start and end of a prompt get followed; the middle decays. Past
   roughly 1,500 tokens, restate the 2 most-violated rules directly before the task; when
   stuffing documents, instructions and the question go after the documents, never mid-context.
@@ -67,10 +68,12 @@ features that ship.
 
 ## 4. API mechanics (Claude, current as of 2026-07; verify against live docs when building)
 
-- Model: `claude-opus-4-8` default ($5/$25 per MTok); `claude-fable-5` only for the hardest calls
-  ($10/$50; handle `stop_reason: "refusal"` and ship the server-side `fallbacks` parameter).
-- `thinking: {type: "adaptive"}`; effort via `output_config.effort`: high default, xhigh for the
-  hardest coding and agentic work, low for mechanical subagent steps.
+- Model: `claude-opus-5` default ($5/$25 per MTok; carries cyber classifiers — handle
+  `stop_reason: "refusal"`); `claude-fable-5` only for the hardest calls ($10/$50; handle
+  `stop_reason: "refusal"` and ship the server-side `fallbacks` parameter).
+- `thinking: {type: "adaptive"}` (on by default on Opus 5; `disabled` 400s above effort `high`);
+  effort via `output_config.effort`: high default, xhigh for the hardest coding and agentic
+  work, low for mechanical subagent steps.
 - No temperature, top_p, top_k on Opus 4.7+ (they 400). No assistant prefills (400): use
   structured outputs.
 - Stream anything long; background long jobs.

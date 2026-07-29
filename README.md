@@ -327,7 +327,7 @@ the-boris-way/
 ### Every skill/agent declares an explicit `model:` pin
 
 Cost and behavior stay invariant whether the main session runs **Fable 5** or
-**Opus 4.8** — an unpinned skill/agent inherits the main-session model, which on a
+**Opus 5** — an unpinned skill/agent inherits the main-session model, which on a
 Fable 5 session silently buys top-tier reasoning (at top-tier cost) for work that
 doesn't need it. Pick the cheapest model that does the job: `haiku` for lookups and
 mechanical checks, `sonnet` for normal procedures, `opus` only where judgment matters.

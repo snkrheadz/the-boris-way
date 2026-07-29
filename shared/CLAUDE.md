@@ -48,9 +48,10 @@ coordinated multi-role → Team; wide fan-out + verify/synthesize → Workflow.
   otherwise, and on a Fable 5 session an untagged delegation buys top-tier reasoning
   (at top-tier cost) for work that doesn't need it.
 - **Security work routes to Opus 4.8.** Security audits, red-teaming, and
-  exploit-reproduction debugging can trip Fable 5's safety classifiers
-  (`stop_reason: refusal`) even when benign — run them on Opus 4.8 (switch the main
-  session, or a `model: "opus"` subagent).
+  exploit-reproduction debugging can trip the cyber safety classifiers on Fable 5
+  *and* Opus 5 (`stop_reason: refusal`) even when benign — run them on Opus 4.8 by
+  switching the main session. A `model: "opus"` subagent resolves to Opus 5, which
+  carries the same classifiers, so it is no longer a safe route.
 - **Dispatch async, don't block.** Fire independent subtasks in the background and
   keep working; reuse a long-lived agent instead of respawning — context carries
   over and cache reads stay warm.
