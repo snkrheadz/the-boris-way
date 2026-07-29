@@ -4,7 +4,7 @@ How to get frontier-quality results from any capable model, on any task: code, c
 development, audit, graphics, animation, motion, effects, prompts, APIs, connectors, UI, UX,
 features, pages, marketing, writing, research, market analysis, anything.
 
-v1.1, 2026-07-03.
+v1.2, 2026-07-29.
 
 ---
 
