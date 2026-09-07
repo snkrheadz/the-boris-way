@@ -48,7 +48,7 @@ The scoring rubric is the official tool's job. Do **not** write your own scorer.
 
 ## Stage 2 — The Boris lens (your core work)
 
-Walk the whole file and classify every block against these six tests. This is where a
+Walk the whole file and classify every block against these seven tests. This is where a
 high-scoring-but-bloated CLAUDE.md gets fixed.
 
 1. **rules → context test.** For each imperative or prohibition, ask: *does a current
@@ -80,6 +80,17 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
 6. **self vs team.** Check placement: shared facts belong in committed `CLAUDE.md`;
    personal/absolute-path/machine-specific notes belong in `CLAUDE.local.md`. Move
    anything that's in the wrong file.
+7. **conditional weighting (`<important if>`).** Claude Code injects every CLAUDE.md under
+   a "this context may or may not be relevant" reminder, so the more off-task content the
+   file carries, the more the model discounts *all* of it. For a block that survives
+   tests 1–6 but only applies to one kind of work (test conventions, API patterns, i18n,
+   state management) and is too small to move off-file under test 2, wrap it in
+   `<important if="you are <narrow trigger>"> … </important>` — one specific condition
+   per block ("adding or modifying imports"), never a catch-all ("writing any code").
+   Context relevant to 90%+ of tasks — project identity, map, commands — stays bare.
+   Inline-and-weighted beats sharding into files the agent must discover with a tool
+   call. (Technique from HumanLayer's `improve-claude-md`; the finer-grained sibling of
+   test 2.)
 
 ## Stage 3 — Distill, apply & verify
 
@@ -145,6 +156,11 @@ Size:  <before> → <after> lines
 ### Moved off CLAUDE.md (auto → on-demand)
 - "<block>" → slash command `.claude/commands/<name>.md`
 - "<detail>" → use `@<path>` at point of need
+
+### Wrapped (`<important if>` — stays inline, conditionally weighted)
+| block | condition |
+|---|---|
+| … | … |
 
 ### Re-placed (self vs team)
 - "<note>" → CLAUDE.local.md (machine-specific)

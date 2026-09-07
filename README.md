@@ -103,6 +103,18 @@ Recommended alongside the official LSP plugins:
 /plugin install typescript-lsp@claude-plugins-official   # TS
 ```
 
+And HumanLayer's control-loop skills (external, MIT) for repo-owned scheduled agent loops
+— a coding agent that runs in *your* CI on a cadence, measures one property of the
+codebase (sensor), picks the next small change (controller), opens a PR (actuator), and
+is bounded to one open PR per loop. This is the CI-resident complement to the cloud
+`routine` in `shared/CLAUDE.md` §5:
+
+```
+/plugin marketplace add humanlayer/skills
+/plugin install design-control-loop@skills          # interview → design → build the loop, tailored to your repo's tooling
+# lighter, no interview: build-iterated-agentic-loop@skills. All 5 skills: https://github.com/humanlayer/skills
+```
+
 #### Research (role-agnostic, optional)
 
 For anyone investigating AI/ML papers, APIs, and models — any role can add it.
