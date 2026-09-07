@@ -51,5 +51,5 @@ weakening = pass. Either missing = fail, with the evidence.
 
 ## Repair
 
-This skill never fixes. A FAIL hands off to `/eng:test-and-fix`; shell-script
-deep dives go to the `verify-shell` agent.
+This skill never fixes. A FAIL hands off to `/eng:test-and-fix`; for shell scripts
+run `shellcheck -x` and `bash -n` directly.

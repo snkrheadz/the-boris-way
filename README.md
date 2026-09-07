@@ -90,9 +90,9 @@ Skills (1): `task-definition-sheet` — the 業務定義シート (task definiti
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (10): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
-  `test-and-fix` `verify-work` `refactor-swarm` `techdebt` `trace-dataflow` `db-query`
-- Agents (8): `code-architect` `architecture-reviewer` `verify-shell`
+- Skills (9): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
+  `test-and-fix` `verify-work` `techdebt` `trace-dataflow` `db-query`
+- Agents (7): `code-architect` `architecture-reviewer`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
 
@@ -219,7 +219,7 @@ Use the official commands directly:
 
 | Need | Official command |
 |---|---|
-| Review the current diff / a PR | `/code-review` (`/code-review ultra [PR#]` for deep multi-agent cloud review), `/review` |
+| Review the current diff / a PR | `/code-review` (`/code-review ultra [PR#]` for deep multi-agent cloud review) |
 | Security review | `/security-review` |
 | Simplify / de-duplicate code | `/simplify` |
 | Verify a change by running the app | `/verify`, `/run` |
@@ -310,7 +310,7 @@ the-boris-way/
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
-├── eng/                              # engineering pack (skills 9 + agents 8)
+├── eng/                              # engineering pack (skills 9 + agents 7)
 ├── research/                         # research pack (arxiv / gemini / huggingface / verify)
 ├── strategy/                         # AI-era personal strategy (career / industry / opportunity)
 ├── writing/                          # de-AI-ify drafts (stop-ai-slop-jp / -en)
@@ -326,11 +326,12 @@ the-boris-way/
 
 ### Every skill/agent declares an explicit `model:` pin
 
-Cost and behavior stay invariant whether the main session runs **Fable 5** or
-**Opus 5** — an unpinned skill/agent inherits the main-session model, which on a
-Fable 5 session silently buys top-tier reasoning (at top-tier cost) for work that
-doesn't need it. Pick the cheapest model that does the job: `haiku` for lookups and
-mechanical checks, `sonnet` for normal procedures, `opus` only where judgment matters.
+Cost and behavior stay invariant whether the main session runs **Fable 5.x** (5 / 5.1,
+2× Opus 5 cost, no fast mode) or **Opus 5** — an unpinned skill/agent inherits the
+main-session model, which on a Fable session silently buys top-tier reasoning (at
+top-tier cost) for work that doesn't need it. Pick the cheapest model that does the job:
+`haiku` for lookups and mechanical checks, `sonnet` for normal procedures, `opus` only
+where judgment matters.
 
 ### Instruction density follows the model pin
 
@@ -340,11 +341,10 @@ The `model:` pin also decides how detailed the instructions should be
 - **Pinned to `sonnet` / `haiku`** — detailed step-by-step procedures are an asset.
   These models still benefit from explicit steps; keep them.
 - **Runs on the main-session model** (no pin, or the orchestrating part of a fan-out
-  skill like `refactor-swarm`) — write constraints, boundaries, and verification
-  gates only. Skip procedural micro-steps: frontier models produce *worse* output
-  when over-instructed.
+  skill) — write constraints, boundaries, and verification gates only. Skip
+  procedural micro-steps: frontier models produce *worse* output when over-instructed.
 - **Never instruct a skill/agent to echo or transcribe its internal reasoning** — on
-  Fable 5 this can trigger `reasoning_extraction` refusals
+  Fable-class models (5 / 5.1) this can trigger `reasoning_extraction` refusals
   (`stop_reason: refusal`). If visibility is needed, report *evidence from tool
   results* instead of thought processes.
 

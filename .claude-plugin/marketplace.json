@@ -26,8 +26,8 @@
     {
       "name": "eng",
       "source": "./eng",
-      "description": "Engineering workflow pack that fills gaps the official commands don't cover: create-pr, new-skill, prune-redundant-skills, review-inbox, test-and-fix, verify-work, refactor-swarm, techdebt, trace-dataflow, db-query, plus code-architect, architecture-reviewer, verify-shell, migration, oncall and AWS/GCP advisor agents.",
-      "version": "0.6.0",
+      "description": "Engineering workflow pack that fills gaps the official commands don't cover: create-pr, new-skill, prune-redundant-skills, review-inbox, test-and-fix, verify-work, techdebt, trace-dataflow, db-query, plus code-architect, architecture-reviewer, migration, oncall and AWS/GCP advisor agents.",
+      "version": "0.7.0",
       "author": {
         "name": "snkrheadz"
       }
@@ -72,7 +72,7 @@
       "name": "craft",
       "source": "./craft",
       "description": "Quality-authoring pack: rubric before artifact, best-of-N candidates, fresh-eyes verify sweeps, and a taste gate, backed by 21 domain craft standards (design, motion, writing, code, research, prompting, product, data, security, ops, media, marketing, decisions, sales, teaching, management, storytelling, academic, career, translation, coordination). Derived from apoorvjain25/frontier (MIT).",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": {
         "name": "snkrheadz"
       }

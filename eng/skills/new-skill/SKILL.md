@@ -19,7 +19,7 @@ exactly what break auto-selection or ship stale caches — so do every step.
 `$ARGUMENTS` is `<pack> <name> [model]`, e.g. `eng db-seed sonnet`.
 
 - **pack** — one of the dirs listed in `.claude-plugin/marketplace.json` (`core`, `pm`,
-  `eng`, `research`, `strategy`, `writing`).
+  `eng`, `research`, `strategy`, `writing`, `spec`, `craft`).
 - **name** — kebab-case; becomes the skill dir and the frontmatter `name:`.
 - **model** — optional; `haiku` / `sonnet` / `opus`. Default `sonnet`. Omit the pin
   only for a skill deliberately meant to run on the main session.

@@ -4,7 +4,7 @@ How to get frontier-quality results from any capable model, on any task: code, c
 development, audit, graphics, animation, motion, effects, prompts, APIs, connectors, UI, UX,
 features, pages, marketing, writing, research, market analysis, anything.
 
-v1.2, 2026-07-29.
+v1.3, 2026-09-07.
 
 ---
 
@@ -150,7 +150,8 @@ vote, and record the dissent. Panels substitute for the taste a stronger model h
 
 ## 4. Weaker-model compensations
 
-Apply these on Opus and below; they are harmless on stronger models.
+Apply these on Sonnet and below. Opus 5 and Fable 5.x self-verify and self-scope
+unprompted (see §6); stacking these on top of them produces over-verification.
 
 - **Narrow the aperture.** Cut task width until each step has one deliverable and one rubric
   section. Ten reliable small steps beat two unreliable big ones.
@@ -264,7 +265,7 @@ When a curated library of best-in-class design references is available to you, s
 
 ---
 
-## 6. Model tuning notes (Claude Opus 5, current as of 2026-07)
+## 6. Model tuning notes (Claude Opus 5 / Fable 5.1, current as of 2026-09)
 
 When YOU are Opus (or when building prompts that run on Opus), these are the known levers:
 
@@ -278,6 +279,11 @@ When YOU are Opus (or when building prompts that run on Opus), these are the kno
   delegation multiplies cost. Run this protocol's bounded verifier/judge passes as written —
   don't add extra delegation on top. File memory and custom tools still benefit from explicit
   "use this when..." trigger conditions.
+- Fable 5.1 (`claude-fable-5-1`, the tier above Opus; same $10/$50 as Fable 5, 1M context) needs
+  less scaffolding, not more: skills written for prior models are often too prescriptive and can
+  degrade its output — prefer constraints, boundaries and verify gates over step-by-step procedure.
+  Never instruct it to echo or transcribe its reasoning (`reasoning_extraction` refusals). It has no
+  fast mode; pin `model:` on every delegation or the subagent silently inherits Fable-tier cost.
 - Review and audit prompts: Opus obeys "only report important issues" literally and recall drops.
   Always use coverage-first reporting (Section 2), filter downstream.
 - Opus has a persistent default design taste (cream or off-white around #F4F1EA, serif display
@@ -293,8 +299,8 @@ When YOU are Opus (or when building prompts that run on Opus), these are the kno
   work — but sweep downward: `low`/`medium` punch above their weight on Opus 5. Streaming for
   long outputs, structured outputs via `output_config.format` (never prefills), cache the stable
   prompt prefix (this protocol and the craft file go first; the volatile task goes last).
-  Handle `stop_reason: "refusal"` — Opus 5 carries cyber safety classifiers (recommended
-  fallback: `claude-opus-4-8`).
+  Handle `stop_reason: "refusal"` — Opus 5 and Fable 5.x carry cyber safety classifiers
+  (documented fallback for both: `claude-opus-4-8`).
 
 ---
 

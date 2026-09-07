@@ -66,10 +66,10 @@ features that ship.
 4. Freeze the winning prompt with a version note: what it is for, known failure modes, eval date.
 5. In production, log inputs and outputs so the next iteration has real cases.
 
-## 4. API mechanics (Claude, current as of 2026-07; verify against live docs when building)
+## 4. API mechanics (Claude, current as of 2026-09; verify against live docs when building)
 
 - Model: `claude-opus-5` default ($5/$25 per MTok; carries cyber classifiers — handle
-  `stop_reason: "refusal"`); `claude-fable-5` only for the hardest calls ($10/$50; handle
+  `stop_reason: "refusal"`); `claude-fable-5-1` only for the hardest calls ($10/$50; handle
   `stop_reason: "refusal"` and ship the server-side `fallbacks` parameter).
 - `thinking: {type: "adaptive"}` (on by default on Opus 5; `disabled` 400s above effort `high`);
   effort via `output_config.effort`: high default, xhigh for the hardest coding and agentic
