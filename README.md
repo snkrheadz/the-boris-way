@@ -61,19 +61,22 @@ What Core ships (role-agnostic):
 
 ### 3. Install role packs
 
+Third-party plugins we recommend are **re-exported from this catalog** (a proxy entry
+pinned to an upstream commit), so `<name>@the-boris-way` is all you type — no second
+`marketplace add`, and everyone gets the same upstream revision until we bump the pin.
+
 #### PM / business
 
 ```
 # Our own business assets (maintained by snkrheadz)
 /plugin install pm@the-boris-way          # 業務定義シート (task definition sheet) as A4 HTML
 
-# PM lifecycle (external, MIT, recommended for non-developers)
-/plugin marketplace add phuryn/pm-skills
-/plugin install pm-product-discovery@pm-skills   # discovery / prioritization / interviews
-/plugin install pm-product-strategy@pm-skills    # strategy / canvases / pricing
-/plugin install pm-execution@pm-skills           # PRD / OKR / roadmap / sprint
-/plugin install pm-market-research@pm-skills     # personas / market sizing / competitors
-# Install only what you need. All 9 plugins: https://github.com/phuryn/pm-skills
+# PM lifecycle (external: phuryn/pm-skills, MIT — proxied here, pinned; recommended for non-developers)
+/plugin install pm-product-discovery@the-boris-way   # discovery / prioritization / interviews
+/plugin install pm-product-strategy@the-boris-way    # strategy / canvases / pricing
+/plugin install pm-execution@the-boris-way           # PRD / OKR / roadmap / sprint
+/plugin install pm-market-research@the-boris-way     # personas / market sizing / competitors
+# Install only what you need. The 5 other upstream plugins: /plugin marketplace add phuryn/pm-skills
 
 # Document generation (official, docx/pptx/xlsx/pdf)
 /plugin install document-skills@anthropic-agent-skills
@@ -101,6 +104,17 @@ Recommended alongside the official LSP plugins:
 ```
 /plugin install gopls-lsp@claude-plugins-official        # Go
 /plugin install typescript-lsp@claude-plugins-official   # TS
+```
+
+And HumanLayer's control-loop skill (external: humanlayer/skills, MIT — proxied here, pinned) for repo-owned scheduled agent loops
+— a coding agent that runs in *your* CI on a cadence, measures one property of the
+codebase (sensor), picks the next small change (controller), opens a PR (actuator), and
+is bounded to one open PR per loop. This is the CI-resident complement to the cloud
+`routine` in `shared/CLAUDE.md` §5:
+
+```
+/plugin install design-control-loop@the-boris-way   # interview → design → build the loop, tailored to your repo's tooling
+# lighter, no interview: build-iterated-agentic-loop — upstream only: /plugin marketplace add humanlayer/skills
 ```
 
 #### Research (role-agnostic, optional)
@@ -287,7 +301,7 @@ curl -fsSL https://raw.githubusercontent.com/snkrheadz/the-boris-way/main/shared
 1. Paste the JSON block above into `~/.claude/settings.json`
 2. Put `shared/CLAUDE.md` at `~/.claude/CLAUDE.md`
 3. Launch `claude` → approve the marketplace prompt when asked
-4. `/plugin marketplace add phuryn/pm-skills` → install the PM plugins you need
+4. `/plugin install pm-execution@the-boris-way` (and whichever other PM plugins you need — all from this one marketplace)
 5. Use `teach-session` to walk through your first task together
 
 Now everyone is "same environment, immediately."
@@ -298,7 +312,7 @@ Now everyone is "same environment, immediately."
 
 ```
 the-boris-way/
-├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec, craft)
+├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec, craft) + pinned proxies of third-party plugins
 ├── .claude/                          # maintainer agent team + maintenance loop (not distributed)
 ├── CLAUDE.md                         # maintainer's map (auto-loaded when working ON this repo)
 ├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
@@ -376,5 +390,15 @@ The `model:` pin also decides how detailed the instructions should be
   team-relevant rule, backport it here — otherwise consumers drift behind the working
   philosophy this repo claims to distribute. Checking is one command:
   `diff -u shared/CLAUDE.md ~/.claude/CLAUDE.md`.
+- **Proxy entries** (third-party plugins re-exported from the catalog) have an object
+  `source` — `{ "source": "git-subdir", "url": "<owner>/<repo>", "path": "<dir>", "sha": "<40-char>" }`
+  — and no local files. The pin guarantees every fresh install gets the same upstream
+  commit. To bump it: `git ls-remote https://github.com/<owner>/<repo> HEAD`, read the
+  upstream diff since the current pin, update `source.sha`, run the gate (`validate.sh`
+  rejects an unpinned or short sha). **Caveat (verified 2026-09): the installed version
+  string comes from the upstream `plugin.json`, which wins over anything in our entry.**
+  A pin bump therefore reaches already-installed consumers only if upstream also bumped
+  its `plugin.json` version; if it did not, tell consumers to `/plugin uninstall` +
+  reinstall. Never leave a proxy unpinned — it would drift with upstream, unreviewed.
 - Consumers pull updates with `/plugin marketplace update the-boris-way`.
-- License: MIT. The external `phuryn/pm-skills` is MIT too.
+- License: MIT. The proxied external plugins (`phuryn/pm-skills`, `humanlayer/skills`) are MIT too.
