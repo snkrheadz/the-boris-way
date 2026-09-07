@@ -44,13 +44,13 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
   instead`). `validate.sh` fails a description with no `Triggers:`. This is the single
   highest-leverage field in the repo — treat it as such.
 - **Pin `model:` explicitly** (`haiku`/`sonnet`/`opus`). Unpinned skills inherit the
-  main-session model, which on a Fable 5 session silently buys top-tier cost. Omit the
+  main-session model, which on a Fable 5.x session silently buys top-tier cost. Omit the
   pin *only* for a skill deliberately meant to run on the main session — `validate.sh`
   warns (not fails) so the choice stays visible.
 - **`context: fork` runs the skill in an isolated subagent.** Add it when the skill goes
   off to produce a bounded deliverable or finding and returns a summary — work whose
   intermediate tokens (file reads, query output, test logs) would otherwise flood the
-  main thread (`db-query`, `techdebt`, `test-and-fix`, `html-output`, `refactor-swarm`).
+  main thread (`db-query`, `techdebt`, `test-and-fix`, `html-output`).
   Omit it when the skill's output *is* the conversational answer or it needs the live
   session / user back-and-forth — the reasoning family (`deep-thinking`,
   `honest-reasoning`, `first-principles`, `life-decision`) and interactive/sequential
