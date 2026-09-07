@@ -76,6 +76,56 @@
       "author": {
         "name": "snkrheadz"
       }
+    },
+    {
+      "name": "pm-product-discovery",
+      "source": {
+        "source": "git-subdir",
+        "url": "phuryn/pm-skills",
+        "path": "pm-product-discovery",
+        "sha": "18468a95b427e70e258b51389796367c6f684e7d"
+      },
+      "description": "Proxy (external: phuryn/pm-skills, MIT, pinned @ upstream 2026-07-03): PM lifecycle — discovery / prioritization / customer interviews. Contents live upstream; this entry only pins the commit."
+    },
+    {
+      "name": "pm-product-strategy",
+      "source": {
+        "source": "git-subdir",
+        "url": "phuryn/pm-skills",
+        "path": "pm-product-strategy",
+        "sha": "18468a95b427e70e258b51389796367c6f684e7d"
+      },
+      "description": "Proxy (external: phuryn/pm-skills, MIT, pinned @ upstream 2026-07-03): PM lifecycle — strategy / canvases / pricing. Contents live upstream; this entry only pins the commit."
+    },
+    {
+      "name": "pm-execution",
+      "source": {
+        "source": "git-subdir",
+        "url": "phuryn/pm-skills",
+        "path": "pm-execution",
+        "sha": "18468a95b427e70e258b51389796367c6f684e7d"
+      },
+      "description": "Proxy (external: phuryn/pm-skills, MIT, pinned @ upstream 2026-07-03): PM lifecycle — PRD / OKR / roadmap / sprint. Contents live upstream; this entry only pins the commit."
+    },
+    {
+      "name": "pm-market-research",
+      "source": {
+        "source": "git-subdir",
+        "url": "phuryn/pm-skills",
+        "path": "pm-market-research",
+        "sha": "18468a95b427e70e258b51389796367c6f684e7d"
+      },
+      "description": "Proxy (external: phuryn/pm-skills, MIT, pinned @ upstream 2026-07-03): PM lifecycle — personas / market sizing / competitors. Contents live upstream; this entry only pins the commit."
+    },
+    {
+      "name": "design-control-loop",
+      "source": {
+        "source": "git-subdir",
+        "url": "humanlayer/skills",
+        "path": "plugins/design-control-loop",
+        "sha": "3c2629142c5d437428269b1b722b08c0b87f574d"
+      },
+      "description": "Proxy (external: humanlayer/skills, MIT, upstream 1.0.0 pinned @ 2026-08-13): interview → design → build a repo-owned CI control loop — sensor / controller / actuator under disturbances, bounded to one open PR per loop. The CI-resident complement to the cloud routine in shared/CLAUDE.md §5. Contents live upstream; this entry only pins the commit."
     }
   ]
 }

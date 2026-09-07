@@ -209,7 +209,28 @@ while IFS=$'\t' read -r pack source mp_version; do
     done
     ok "pack '$pack': agents frontmatter checked"
   fi
-done < <(jq -r '.plugins[] | [.name, .source, .version] | @tsv' "$marketplace")
+done < <(jq -r '.plugins[] | select(.source|type=="string") | [.name, .source, .version] | @tsv' "$marketplace")
+
+# --- 3b. proxy entries (source is an object, not a "./pack" path) ------------
+# A proxy re-exports a third-party plugin straight from its upstream repo
+# (git-subdir) so consumers install it as <name>@the-boris-way without adding a
+# second marketplace. It MUST pin a full commit sha so every fresh install gets
+# the same upstream commit. Note the version string is upstream's plugin.json
+# (it wins over the entry's), so a pin bump only re-materializes for existing
+# installs when upstream bumped its version too — see README → Maintenance.
+# Contents live upstream, so nothing else is checked here — `claude plugin
+# validate .` below covers the schema.
+while IFS=$'\t' read -r pack src url path sha; do
+  if [ "$src" != "git-subdir" ]; then
+    err "proxy '$pack': source.source must be git-subdir (got '$src')"
+  elif [ -z "$url" ] || [ -z "$path" ]; then
+    err "proxy '$pack': source.url and source.path are both required"
+  elif ! printf '%s' "$sha" | grep -Eq '^[0-9a-f]{40}$'; then
+    err "proxy '$pack': source.sha must be a full 40-char commit sha (unpinned proxies drift with upstream)"
+  else
+    ok "proxy '$pack': $url/$path pinned @ ${sha:0:7}"
+  fi
+done < <(jq -r '.plugins[] | select(.source|type=="object") | [.name, .source.source, .source.url, .source.path, (.source.sha // "")] | @tsv' "$marketplace")
 
 # --- 4d. repo-local maintainer surface (.claude/) ----------------------------
 # The maintainer agent team and its orchestration skill live outside the packs
@@ -244,7 +265,7 @@ fi
 # boundary that keeps auto-selection unambiguous. A reference into a LOCAL pack
 # must resolve to a real skill; refs into external marketplaces (e.g.
 # /claude-md-management:*) are out of our control and skipped.
-local_packs="$(jq -r '.plugins[].name' "$marketplace")"
+local_packs="$(jq -r '.plugins[] | select(.source|type=="string") | .name' "$marketplace")"
 valid_refs="$(
   while IFS=$'\t' read -r p src; do
     d="${src#./}"
@@ -253,7 +274,7 @@ valid_refs="$(
       [ -d "$s" ] || continue
       printf '%s:%s\n' "$p" "$(basename "$s")"
     done
-  done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
+  done < <(jq -r '.plugins[] | select(.source|type=="string") | [.name, .source] | @tsv' "$marketplace")
 )"
 xref_fail=0
 while read -r ref; do
@@ -334,7 +355,7 @@ else
         fi
       done
     fi
-  done < <(jq -r '.plugins[] | [.name, .source] | @tsv' "$marketplace")
+  done < <(jq -r '.plugins[] | select(.source|type=="string") | [.name, .source] | @tsv' "$marketplace")
   [ "$readme_fail" -eq 0 ] && ok "every skill and agent is documented in $readme"
 fi
 

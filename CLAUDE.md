@@ -22,7 +22,7 @@ claude plugin validate .      # authoritative catalog check (also run inside val
 ## File map
 
 ```
-.claude-plugin/marketplace.json   # the catalog: lists PACKS (not skills)
+.claude-plugin/marketplace.json   # the catalog: lists PACKS (not skills) + PROXY entries (third-party plugins, source = git-subdir + pinned sha)
 <pack>/.claude-plugin/plugin.json # per-pack manifest: name + description + version
 <pack>/skills/<name>/SKILL.md     # skills are AUTO-DISCOVERED from here — not enumerated anywhere
 <pack>/agents/<name>.md           # agents, same idea
@@ -59,6 +59,12 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 - **Bump the version in BOTH** the pack's `plugin.json` and its `marketplace.json`
   entry on every content change. Installed caches are keyed by version; disagree and
   consumers serve stale skills forever. `validate.sh` fails a mismatch.
+- **Proxy entries pin a full sha.** A third-party plugin we recommend is re-exported
+  from the catalog (`source: { git-subdir, url, path, sha }`) rather than vendored or
+  "add their marketplace too". Contents stay upstream; fresh installs get exactly the
+  pinned commit. The version string is upstream's `plugin.json` (it wins over ours), so
+  a pin bump lands for already-installed consumers only when upstream bumped its version
+  too — otherwise they must uninstall + reinstall. `validate.sh` fails an unpinned proxy.
 - **Built-in surface keeps growing** — run `/eng:prune-redundant-skills` periodically
   to catch drift before shipping a skill that duplicates a new native command.
 
