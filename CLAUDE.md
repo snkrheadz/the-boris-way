@@ -34,7 +34,7 @@ scripts/validate.sh              # the gate
 ```
 
 Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `strategy` ·
-`writing` · `spec`. README has the per-pack skill lists.
+`writing` · `spec` · `craft`. README has the per-pack skill lists.
 
 ## Conventions (the *why* — mechanics are in README → Authoring conventions / Maintenance)
 
