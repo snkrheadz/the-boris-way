@@ -74,13 +74,20 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
    origin/<default-branch>`. Inside it, copy the allow-list aside (the repo's
    `.claude/settings.json` `permissions.allow`; if the repo has none, your own
    `settings.local.json` list, or build one from the repo's verify commands plus
-   read-only shell: `git`, `ls`, `cat`, `grep`, `find`, `head`, `sed`, `wc`). Delete
-   `CLAUDE.md`, `CLAUDE.local.md` and `.claude/` (all of it — hooks wired from
-   `settings.json` die with it) and **commit that deletion by itself** (`retest: remove
-   repo-owned Claude config`) so the task's later commit cannot sweep it up. Install
-   dependencies and run the verify gate again: a test that now fails because the config
-   is gone is a finding in its own right (the config is load-bearing for that gate) —
-   record it, leave it failing, and expect the retest session to meet it. Run:
+   read-only shell: `git`, `ls`, `cat`, `grep`, `find`, `head`, `sed`, `wc` — but not
+   `cd`, which lets the session wander into sibling repos). Delete `CLAUDE.md`,
+   `CLAUDE.local.md`, `.claude/` (all of it — hooks wired from `settings.json` die with
+   it) **and every mirror or derivative of it**: `AGENTS.md`, `.agents/`, `.codex/`,
+   `.cursor/`, `.mcp.json`, and whatever a sync script in `package.json` or `scripts/`
+   generates from `.claude/`. A model that finds no CLAUDE.md goes looking for the
+   nearest substitute; a run that left `AGENTS.md` behind measured "CLAUDE.md vs its
+   copy" and nothing else. Then fold the deletion into the base commit
+   (`git add -A && git commit --amend --no-edit`) so it is neither swept into the task's
+   commit nor visible in `git log`, where the session would read it on its first turn.
+   Install dependencies and run the verify gate again: a test that now fails because
+   the config is gone is a finding in its own right (the config is load-bearing for
+   that gate; the apply step must regenerate the mirror and fix that test) — record
+   it, leave it failing, and expect the retest session to meet it. Run:
    ```
    claude -p "<task>" --permission-mode acceptEdits \
      --allowedTools <the saved allow list, comma-joined> \
@@ -96,9 +103,14 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
 
 4. **Read the transcript against the points.** For each observation point: observed
    yes/no, and the transcript line (tool call or text) that proves it. Also record:
-   tokens on the first turn (context size), tool-call count, `Agent` calls and whether
-   each carried `model`, every test/lint command run, every convention followed or
-   missed. Diff the worktree's commit against the repo's conventions by hand.
+   tool-call count, `Agent` calls and whether each carried `model`, every test/lint
+   command run, every convention followed or missed, and where the session got its
+   repo knowledge from (which files it read before editing). Diff the worktree's
+   commit against the repo's conventions by hand. First-turn token counts are not a
+   context measurement in headless mode — MCP tool schemas load on a race and swing
+   the number by tens of thousands between identical runs; compare the `init` event's
+   `tools`/`skills` counts and the byte size of what was deleted instead, or run with
+   `--strict-mcp-config` to take MCP out.
 
 5. **Verdict per item.** Keep iff any of: its observation point flipped (behavior
    changed when it was gone), it is **C**, it is **D**. Drop **A**/**B** items whose
@@ -130,6 +142,8 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
 - Don't write "covered by X" without having read X.
 - Don't let the retest session push or open a PR; the real PR is yours, after review.
 - Don't run on a dirty tree, and don't leave the worktree behind.
+- Don't leave a generated copy of the config (`AGENTS.md`, `.agents/`, …) in the
+  worktree, and don't let the deletion show in `git log` — both prime the session.
 
 ## Across many repos
 
