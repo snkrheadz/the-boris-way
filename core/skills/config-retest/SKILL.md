@@ -14,7 +14,15 @@ item comes from a **transcript**, not from reading the item and guessing. Static
 
 Scope: the **repo's own** config — `CLAUDE.md`, `CLAUDE.local.md`, `.claude/` (skills,
 hooks, agents, settings hook wiring). The user's global `~/.claude/` stays in place; it
-is audited by running this skill on the dotfiles repo that owns it.
+is audited by running this skill on the dotfiles repo that owns it. That global config
+is a **confound**: a repo rule whose observation point holds only because the
+maintainer's global CLAUDE.md, hooks or plugin packs enforce the same thing is not
+redundant for a contributor without them. Step 1 lists those global mechanisms and
+step 5 treats the points they cover as *shadowed*.
+
+This skill runs on the main session on purpose (no `model:` pin, no `context: fork`):
+it waits on a peer session's idle notice and opens the PR, both of which are bound to
+the live session.
 
 Arguments: `[path] [--task "<one line>"] [--peer] [--baseline]`
 - `path` — target repo (default: cwd).
@@ -42,7 +50,16 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
      (review before PR, model routing for cost, a deny-list).
    - **D** script-backed tool — the item's value is a script it ships, not its prose.
    - **E** unknown — cannot tell without the retest.
+   Then list the **global mechanisms active on this machine** that could stand in for a
+   repo item: `~/.claude/CLAUDE.md` rules, hooks wired in `~/.claude/settings.json`,
+   hooks and skills of enabled plugin packs. Note next to each repo item whether a
+   global one covers the same claim, and whether the repo declares that pack for every
+   contributor (`.claude/settings.json` `enabledPlugins`) — if not, the global one does
+   not count for the team.
    Save the table to the scratch dir (`${TMPDIR:-/tmp}/config-retest-<repo>-<date>/`).
+   Run the repo's verify gate once on a clean checkout — it must be green before
+   anything is deleted, or the retest cannot tell config-caused failures from
+   pre-existing ones.
 
 2. **Pick the retest task and the observation points.** The task is a small, real
    change in this repo that touches what the config claims: it should need a test run,
@@ -53,10 +70,17 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
    before the PR command?", "called Agent without model?"). Write both down before
    running anything; the points are fixed before the evidence exists.
 
-3. **Retest in a worktree.** `git worktree add <scratch>/wt -b config-retest/<date>`.
-   Inside it, copy `.claude/settings.json`'s `permissions.allow` aside, then delete
+3. **Retest in a worktree.** `git worktree add <scratch>/wt -b config-retest/<date>
+   origin/<default-branch>`. Inside it, copy the allow-list aside (the repo's
+   `.claude/settings.json` `permissions.allow`; if the repo has none, your own
+   `settings.local.json` list, or build one from the repo's verify commands plus
+   read-only shell: `git`, `ls`, `cat`, `grep`, `find`, `head`, `sed`, `wc`). Delete
    `CLAUDE.md`, `CLAUDE.local.md` and `.claude/` (all of it — hooks wired from
-   `settings.json` die with it). Run:
+   `settings.json` die with it) and **commit that deletion by itself** (`retest: remove
+   repo-owned Claude config`) so the task's later commit cannot sweep it up. Install
+   dependencies and run the verify gate again: a test that now fails because the config
+   is gone is a finding in its own right (the config is load-bearing for that gate) —
+   record it, leave it failing, and expect the retest session to meet it. Run:
    ```
    claude -p "<task>" --permission-mode acceptEdits \
      --allowedTools <the saved allow list, comma-joined> \
@@ -64,8 +88,11 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
    ```
    The repo's own allow-list is the sandbox boundary; if the run stalls on a denied
    tool, record it and switch to `--peer`. With `--baseline`, run the same command in a
-   second worktree that keeps the config. With `--peer`, send the task text plus the
-   "commit, don't push" rule to the peer session and wait for its idle notice.
+   second worktree that keeps the config. With `--peer`, the message to the peer
+   session must start with `cd <scratch>/wt` (a peer keeps its own cwd; without the cd
+   it runs the task in the normal checkout with the config intact and measures
+   nothing), then the task text, then the "commit, don't push" rule; wait for its idle
+   notice (`notify_when_idle`).
 
 4. **Read the transcript against the points.** For each observation point: observed
    yes/no, and the transcript line (tool call or text) that proves it. Also record:
@@ -75,7 +102,10 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
 
 5. **Verdict per item.** Keep iff any of: its observation point flipped (behavior
    changed when it was gone), it is **C**, it is **D**. Drop **A**/**B** items whose
-   point held. **E** items and any item the task never exercised stay, marked
+   point held **and** whose claim no global mechanism from step 1 was enforcing during
+   the run; a point that held under a global hook or rule is *shadowed* — the retest
+   cannot judge that item, so it stays unless the repo declares the same mechanism for
+   every contributor. **E** items and any item the task never exercised stay, marked
    *unexercised* — absence of evidence is not evidence; name the task that would
    exercise them next time.
 
@@ -95,7 +125,8 @@ Cost: one retest run is a full session, roughly 100k–300k tokens. Say so befor
 ## Don't
 
 - Don't touch `~/.claude/` or another person's `settings.local.json`.
-- Don't drop an item because the retest didn't exercise it.
+- Don't drop an item because the retest didn't exercise it, or because a global hook
+  or rule on your machine held the line for it.
 - Don't write "covered by X" without having read X.
 - Don't let the retest session push or open a PR; the real PR is yours, after review.
 - Don't run on a dirty tree, and don't leave the worktree behind.
