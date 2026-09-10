@@ -51,6 +51,30 @@ Entry format:
   (Same source; also the promote-to-code lens.)
 - Detect: deterministic, gate-shaped imperatives in CLAUDE.md ("always X before
   Y", "never Z") with no corresponding hook wired in settings — cross-check
-  `.claude/settings.json` hook entries against the prose.
+  `.claude/settings.json` hook entries against the prose. Exclude imperatives whose
+  satisfaction is a human act ("get explicit human approval first") — those are P4,
+  not gaps.
 - Fix route: `/core:promote-to-code` — it judges promotability and deletes the
   prose in the same change that adds the enforcement.
+
+## P4 — "A human approved this" cannot be guaranteed by anything inside the repo
+
+- Why: the agent can write any file in the repo, so an approval marker, a PR-body
+  approval field, an approval file, or a settings opt-in can all be produced by the
+  agent itself and prove nothing about a human having approved. The most a repo-side
+  mechanism buys is upgrading a *silent* change into a *visible, explicit bypass* —
+  the same strength as the existing allow-marker family (`hardcoded-id-allow` etc.).
+  Enough for the typo class, not for approval of irreversible operations. (medii-aws-infra
+  audit, 2026-09-10: trying to hook the "human must explicitly approve Object Lock
+  changes on the audit-archive bucket" rule showed every approval channel — pre-commit
+  grep + marker, PreToolUse block + env-var opt-in, PR-body field + CodeRabbit check —
+  was forgeable by the agent.)
+- Detect: two stages. (1) Among the imperatives P3 picks up, any whose satisfaction
+  depends on a human act ("必ず人間の明示承認を得る", "get explicit approval before
+  running") is **excluded from P3** and never reported as GAP. (2) Search the target
+  repo for where it declares the rule judgement-bound — a "needs human review" list,
+  a section headed "judgement-only guardrails", an ADR deciding not to mechanise —
+  and, if found, report `N/A` quoting that declaration.
+- Fix route: none (close as `N/A`). If the same rule also carries an invariant that
+  is machine-checkable independent of approval (a value range, a required structure),
+  route only that part to `/core:promote-to-code`.
