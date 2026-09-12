@@ -9,7 +9,7 @@
       "name": "core",
       "source": "./core",
       "description": "Cross-role foundation for everyone: first-principles + honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, rich HTML output, a CLAUDE.md tuner, a prose-rule-to-enforcement promoter and a principles-driven context auditor (Boris-way), and the sensitive-file guard + stop-time verify-gate hooks. Install this first, whatever your role.",
-      "version": "0.11.2",
+      "version": "0.11.3",
       "author": {
         "name": "snkrheadz"
       }
