@@ -1,6 +1,6 @@
 ---
 name: honest-reasoning
-description: "Answer a high-stakes question under explicit Helpful/Honest/Harmless self-checks: label each claim's confidence, steelman the counter-case, and name the answer's weakest point. Best for one focused question; to break apart a problem too big for a single answer, use /core:deep-thinking instead. Triggers: /core:honest-reasoning, honest answer, rigorous answer, steelman this, what's your confidence, be brutally honest"
+description: "Answer a high-stakes question under explicit Helpful/Honest/Harmless self-checks: label each claim's confidence, steelman the counter-case, and name the answer's weakest point. Best for one focused question; to break apart a problem too big for a single answer, use /core:deep-thinking instead. Triggers: /core:honest-reasoning, honest answer, rigorous answer, steelman this, what's your confidence, be brutally honest, 忖度なく, 本音で, お世辞抜きで, 率直に"
 user-invocable: true
 allowed-tools: Read, Grep, Glob, WebSearch
 model: opus

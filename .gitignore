@@ -1,0 +1,3 @@
+# eval の実行結果。1 run あたり約 1MB、grader の evidence に成果物・回答の全文が埋まる。
+# スイート（prompt.md / graders/）は追跡するが、結果は追跡しない。
+*/evals/results/

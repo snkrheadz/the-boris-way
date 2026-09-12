@@ -23,6 +23,14 @@
 #      python3+PyYAML; warns and skips otherwise). Line-greps can't catch an
 #      unquoted value like `description: ... Triggers: ...` turning the block
 #      into an invalid nested mapping — strict loaders then drop the file.
+#   4e. Each skill/agent `Triggers:` carries at least one Japanese literal
+#      (warn — python3 required). A trigger with no literal the prompt can
+#      match falls back to inference, and firing then wobbles run to run:
+#      measured on core's honest-reasoning (English-only, fired 0/3 on two
+#      eval cases) against pm's task-definition-sheet (Japanese, 3/3 on all
+#      five). Warn-only on purpose — forcing Japanese onto a skill that is
+#      naturally invoked by command name would pad the description and cost
+#      more autonomy surface than it buys.
 #   4d. Repo-local .claude/ skills and agents (the maintainer surface, not
 #      distributed) answer to the same frontmatter rules as 4/4b — the quality
 #      tools are gated too. Git-tracked files only: contributors keep personal,
@@ -61,6 +69,20 @@ else
   note "python3+PyYAML absent — skipped frontmatter YAML parse (check 4c)"
 fi
 
+# python3 alone (no PyYAML) backs check 4e. BSD grep has no -P, so the
+# codepoint ranges are tested in python rather than with a PCRE class.
+have_py=0
+if command -v python3 >/dev/null 2>&1; then
+  have_py=1
+else
+  note "python3 absent — skipped Triggers language check (check 4e)"
+fi
+
+# 4e findings are collected, not warned one by one: there are dozens and emitting
+# each as its own WARN buries the handful that name a single fixable thing (an
+# unpinned model). One summary line before the verdict instead.
+jp_missing=()
+
 frontmatter_yaml_ok() {
   # $1 = markdown file that may start with a `---` frontmatter block.
   # Exit 0 when the block parses as YAML (or there is no block — the
@@ -92,6 +114,20 @@ frontmatter() {
 # --- shared frontmatter rules (checks 4 / 4b / 4d) ---------------------------
 # Single definitions: the pack loop and the repo-local .claude/ surface must
 # enforce the same bar — fix a rule here, not in per-call copies.
+# Triggers に日本語が含まれるか（4e を支える）。字面の一致が無いトリガーは
+# 発火が意味推論に落ち、同一プロンプトでも run ごとにぶれる — core の
+# honest-reasoning (英語のみ, 発火 0/3〜3/3) と pm の task-definition-sheet
+# (日本語あり, 5ケース全て 3/3) がその対照。warn 止まりなのは、コマンド名で
+# 呼ぶのが自然なスキルまで日本語を強制すると description が水増しされ、
+# autonomy surface の質がかえって下がるため。
+triggers_have_jp() {
+  printf '%s\n' "$1" | python3 -c '
+import re, sys
+m = re.search(r"Triggers:(.*)", sys.stdin.read(), re.S)
+sys.exit(0 if m and re.search(r"[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff]", m.group(1)) else 1)
+'
+}
+
 check_skill_md() {
   local skill_md="$1" sdir fm name
   sdir="$(basename "$(dirname "$skill_md")")"
@@ -110,6 +146,8 @@ check_skill_md() {
     err "$skill_md: no description in frontmatter"
   elif ! printf '%s\n' "$fm" | grep -q 'Triggers:'; then
     err "$skill_md: description lacks 'Triggers:' (the auto-selection surface)"
+  elif [ "$have_py" = 1 ] && ! triggers_have_jp "$fm"; then
+    jp_missing+=("$skill_md")
   fi
 
   if ! printf '%s\n' "$fm" | grep -q '^model:'; then
@@ -140,6 +178,8 @@ check_agent_md() {
     fi
     if ! printf '%s\n' "$afm" | grep -q 'Triggers:'; then
       err "$agent_md: description lacks 'Triggers:' (the auto-selection surface)"
+    elif [ "$have_py" = 1 ] && ! triggers_have_jp "$afm"; then
+      jp_missing+=("$agent_md")
     fi
   fi
 
@@ -385,6 +425,12 @@ if command -v claude >/dev/null 2>&1; then
   fi
 else
   note "claude CLI absent — skipped 'claude plugin validate .'"
+fi
+
+# --- 4e summary: one line, not one per file (collected in jp_missing) -------
+if [ ${#jp_missing[@]} -gt 0 ]; then
+  note "check 4e: ${#jp_missing[@]} description(s) carry English-only Triggers — a Japanese prompt then has no literal to match and firing falls back to inference (measured: core/honest-reasoning went 0/3 -> 3/3 firing on two eval cases once Japanese was added, control case unchanged). Add the phrasing a Japanese speaker would actually use to invoke it, and only where that is how the skill gets called — this is not a word quota."
+  printf '%s\n' "${jp_missing[@]}" | sed 's/^/       /'
 fi
 
 # --- verdict ----------------------------------------------------------------

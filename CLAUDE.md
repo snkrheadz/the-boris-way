@@ -17,6 +17,9 @@ don't ship it (see README → *Covered by official Claude Code*).
 bash scripts/validate.sh      # closing gate (run before every PR) — JSON, version agreement, skill frontmatter; "done" = catalog installs & skills selectable
 claude plugin validate .      # authoritative catalog check (also run inside validate.sh)
 /eng:new-skill <pack> <name>  # scaffold SKILL.md + bump both versions; then run the gate
+bash scripts/eval-init.sh     # scaffold a blank eval case into every local pack (idempotent).
+                              # --bare templates only: a real suite needs `cd <pack> && claude plugin eval init`
+                              # with a human in the loop — inside a session that command writes nothing.
 ```
 
 ## File map
@@ -67,6 +70,25 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
   too — otherwise they must uninstall + reinstall. `validate.sh` fails an unpinned proxy.
 - **Built-in surface keeps growing** — run `/eng:prune-redundant-skills` periodically
   to catch drift before shipping a skill that duplicates a new native command.
+- **A pilot eval run is where you check the graders, not the score.** When authoring a
+  suite (`cd <pack> && claude plugin eval init`), read BOTH arms of every pilot. A grader
+  that passed in the without arm too carries no Δ — so it may not be what decides the
+  case. Either it is scoped wrong (a regex over the whole file matching for an unrelated
+  reason — anchor it to the field it claims to test), or it is a **guard**, which is
+  fine but must be named as one: a `file_exists` on a side-effect case passes in both
+  arms on purpose, and it is what stops that case's `count:0` graders from passing
+  vacuously on a file that was never written. Keep guards, weight template-fidelity
+  checks at 0.5, and let an outcome grader that actually moves Δ carry the verdict.
+  Read Δ, never the pass rate.
+- **Then read the full run's firing rate per run, not the mean.** A pilot cannot show
+  this — `runs: 3` can. What a case's Δ means depends on how often the skill actually
+  fired: 3/3 → Δ measures answer quality; partial → Δ mixes quality with trigger luck;
+  0/3 → that case measured nothing about the skill and the sign of its Δ is noise (core's
+  `03-migration-call` read −0.22 this way). Per-run detail lives in
+  `arms.<arm>[].graders[]`, not the summary line — a `FAIL FAIL FAIL` in the NOTES column
+  is one run's three judge votes. **When a case reads 0/3, check whether `Triggers:` share
+  a literal with the prompt before touching the graders** — that is what `validate.sh`
+  check 4e warns about, and it was the cause both times here.
 
 ## Maintenance loop
 
