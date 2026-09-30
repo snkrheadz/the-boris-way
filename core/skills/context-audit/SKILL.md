@@ -23,6 +23,7 @@ Target: the current repo, or the path passed as an argument.
 2. **Inventory the target repo's context surfaces:**
    - `CLAUDE.md` (project root; also `CLAUDE.local.md` if present)
    - `.claude/skills/*/SKILL.md` — collect each `description:` frontmatter
+   - path-scoped rules: `.claude/rules/*.md` — collect each `paths:` frontmatter
    - hooks: `.claude/settings.json` / `settings.local.json` hook entries and any
      repo hook-script directories they reference
    - verification entrypoints: `scripts/verify*.sh`, `Makefile` verify/check targets,
