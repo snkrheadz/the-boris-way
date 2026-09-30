@@ -53,7 +53,6 @@ What Core ships (role-agnostic):
 - `promote-to-code` — move a repo's deterministic prose rules out of CLAUDE.md into an enforcement mechanism (hook / CI / verify script); a bundled `audit.sh` detects candidates, the skill makes the promotion judgement and deletes the prose in the same change
 - `context-audit` — audit a repo's `.claude/` context against the pack's evolving `principles.md` (does verification auto-fire? are green gates checked for weakening? are must-not-skip rules hooks? is "a human must approve" left as judgement rather than mis-reported as a hook gap? does each path-scoped rule load where its violation gets written?); reports gaps with evidence and routes each fix to `tune-claude-md` / `promote-to-code`
 - `config-retest` — the 6-monthly delete-and-retest: delete a repo's CLAUDE.md/skills/hooks in a worktree, re-run a real task in a fresh session, keep only what changed behavior or cannot be derived, PR the pruned config with the evidence table
-- `html-output` — emit specs / reviews / reports as rich HTML
 - `pre-tool-guard` hook — block access to sensitive files (defense in depth)
 - `stop-verify-gate` hook — when a session edited files but never ran the repo's
   `scripts/verify.sh` closing gate, block the stop ONCE and ask for the gate to be run
@@ -94,9 +93,9 @@ Skills (1): `task-definition-sheet` — the 業務定義シート (task definiti
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (9): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
-  `test-and-fix` `verify-work` `techdebt` `trace-dataflow` `db-query`
-- Agents (7): `code-architect` `architecture-reviewer`
+- Skills (7): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
+  `verify-work` `techdebt` `db-query`
+- Agents (6): `architecture-reviewer`
   `migration-assistant` `oncall-guide` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
 
@@ -168,7 +167,7 @@ examples. Derived from [hardikpandya/stop-slop](https://github.com/hardikpandya/
 
 The spec pipeline — take a change from a one-line intent (or a repo audit) to a mergeable
 PR through human-gated phases. Verification-first, one phase per command. Pairs with **eng**
-(`/eng:create-pr`, `/eng:test-and-fix`).
+(`/eng:create-pr`, `/eng:verify-work`).
 
 ```
 /plugin install spec@the-boris-way
@@ -241,6 +240,9 @@ Use the official commands directly:
 | Commit | Claude Code commits natively (or the `commit-commands` plugin) |
 | Initialize `CLAUDE.md` / project config | `/init`, the `update-config` skill |
 | Claude Code / Agent SDK / API how-to | the official `claude-code-guide` agent |
+| Design an implementation / architecture plan | the built-in `Plan` agent (pair with `eng:architecture-reviewer` to critique the diff) |
+| Rich HTML page instead of Markdown | Artifacts (the built-in `Artifact` tool, where your account offers it) |
+| Run tests and fix failures until green | the main session does this unprompted; close with `/eng:verify-work` |
 
 The `eng` pack's `review-inbox` builds **on top of** `/code-review` (it triages the PRs where
 you are the requested reviewer and posts human-confirmed comments), rather than replacing it.
@@ -320,7 +322,7 @@ the-boris-way/
 ├── core/                             # role-agnostic plugin
 │   ├── .claude-plugin/plugin.json
 │   ├── skills/                       # first-principles, honest-reasoning, deep-thinking, life-decision,
-│   │                                 #   teach-session, tune-claude-md, promote-to-code, context-audit, config-retest, html-output
+│   │                                 #   teach-session, tune-claude-md, promote-to-code, context-audit, config-retest
 │   └── hooks/                        # pre-tool-guard.sh + stop-verify-gate.sh (+ tests) + hooks.json
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json

@@ -1,6 +1,6 @@
 ---
 name: architecture-reviewer
-description: "Adversarial design reviewer. The verify-half counterpart to code-architect (generate↔verify). Critiques a diff/PR for architecture integrity, module boundary violations, coupling, leaky abstractions, and contract-breaking changes. Returns structured findings, not prose. Triggers: architecture review, design review, PR design review, boundary check, coupling analysis"
+description: "Adversarial design reviewer. The verify-half counterpart to the built-in Plan agent (generate↔verify). Critiques a diff/PR for architecture integrity, module boundary violations, coupling, leaky abstractions, and contract-breaking changes. Returns structured findings, not prose. Triggers: architecture review, design review, PR design review, boundary check, coupling analysis"
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---

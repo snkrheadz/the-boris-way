@@ -55,8 +55,8 @@ your review. The last line of each command's output tells you the exact next com
 | `/spec:review <id>` | Isolated-context adversarial review of the diff | spec id | `review.md` | **Gate ③** |
 
 `/spec:scan` uses the portable rubric in `skills/scan/rubric.md` (the Honk three
-pillars). PR creation and test repair are handled by the **eng** pack
-(`/eng:create-pr`, `/eng:test-and-fix`) — install it alongside.
+pillars). PR creation and the closing gate are handled by the **eng** pack
+(`/eng:create-pr`, `/eng:verify-work`) — install it alongside.
 
 ## The human gates
 

@@ -53,7 +53,7 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 - **`context: fork` runs the skill in an isolated subagent.** Add it when the skill goes
   off to produce a bounded deliverable or finding and returns a summary — work whose
   intermediate tokens (file reads, query output, test logs) would otherwise flood the
-  main thread (`db-query`, `techdebt`, `test-and-fix`, `html-output`).
+  main thread (`db-query`, `techdebt`, `verify-work`, `craft:produce`).
   Omit it when the skill's output *is* the conversational answer or it needs the live
   session / user back-and-forth — the reasoning family (`deep-thinking`,
   `honest-reasoning`, `first-principles`, `life-decision`) and interactive/sequential

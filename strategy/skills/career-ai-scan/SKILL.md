@@ -76,7 +76,7 @@ step for the next 30 days.
 
 ## Output
 
-Default to a Markdown report (offer to render it via `/core:html-output` if installed). If
+Default to a Markdown report (offer an HTML page / Artifact if the user wants to share it). If
 writing to a file, resolve `ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"` and
 save under `$ROOT/docs/` — never a bare `./`.
 
