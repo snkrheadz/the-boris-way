@@ -78,3 +78,25 @@ Entry format:
 - Fix route: none (close as `N/A`). If the same rule also carries an invariant that
   is machine-checkable independent of approval (a value range, a required structure),
   route only that part to `/core:promote-to-code`.
+
+## P5 — A path-scoped rule also loads where its violation gets written
+
+- Why: a `.claude/rules/<x>.md` with `paths:` loads only when a matching file is
+  read. A rule of the form "X belongs in layer A, not in B" is *about* A but is
+  *broken* by writing X into B. If its `paths:` cover only A, the rule is not loaded
+  at the one moment it matters, and neither the authoring agent nor a reviewer
+  reading B sees it. (PR review, 2026-09: a backend rules file scoped to the domain
+  layer said a business rule lives in one domain function; a second copy of the rule
+  was written in a frontend page, where only the frontend rules file loads. Both the
+  authoring agent and a multi-reviewer gate missed it; the fix was one line in the
+  frontend rules file.)
+- Detect: for each rules file with `paths:`, grep its body for lines naming another
+  directory as the required home of something (「〜に置く」, "belongs in", "lives in",
+  "not in <dir>", "does not import"). For each hit, check that the rules file whose
+  `paths:` cover the *wrong* home carries the same constraint or a pointer to it.
+  Missing on that side = GAP. No `paths:`-scoped rules = `N/A`.
+- Fix route: add the constraint (one line, or a pointer) to the rules file that loads
+  at the write-site; widen `paths:` only when no such file exists. Keep it out of
+  CLAUDE.md: always-on loading spends the always-loaded budget to fix a scoping
+  problem. If review runs through agents whose prompts the repo's rules files don't
+  reach, also put the check in the repo's review procedure.
