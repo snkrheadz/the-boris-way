@@ -78,3 +78,24 @@ Entry format:
 - Fix route: none (close as `N/A`). If the same rule also carries an invariant that
   is machine-checkable independent of approval (a value range, a required structure),
   route only that part to `/core:promote-to-code`.
+
+## P5 — A path-scoped rule loads where the violation is written, not only where the rule is about
+
+- Why: a `.claude/rules/<x>.md` with `paths:` loads only when a matching file is
+  read. A rule of the form "X belongs in layer A, not in B" is *about* A but is
+  *broken* by writing X into B — if its `paths:` cover only A, the rule is invisible
+  at the one moment it matters. (im-made PR #718, 2026-09-30: `backend.md` said
+  「規則は domain の 1 関数に置く」 with `paths:` `src/lib/**`; a size-matching rule was
+  written in `src/frontend/src/pages/`, where only `frontend.md` loads. The authoring
+  agent and a 6-reviewer spec gate both missed it; the fix was one line in
+  `frontend.md`.)
+- Detect: for each rules file with `paths:`, grep its body for lines naming another
+  directory as the required home of something (「〜に置く」, "belongs in", "lives in",
+  "not in <dir>", "does not import"). For each hit, check that the rules file whose
+  `paths:` cover the *wrong* home carries the same constraint or a pointer to it.
+  Missing on that side = GAP. No `paths:`-scoped rules = `N/A`.
+- Fix route: add the constraint (one line, or a pointer) to the rules file that loads
+  at the write-site; widen `paths:` only when no such file exists. Do not move it to
+  CLAUDE.md just to make it always-on (that spends the always-loaded budget). If the
+  repo's reviewers are plugin agents whose repo-local copies don't win, also put the
+  check in the repo's review procedure so the reviewer prompt carries it.
