@@ -88,7 +88,8 @@ The single-response form, the default anywhere a chat box is all you have:
 
 ```
 define the rubric (read the craft file; add task-specific lines)
-generate, one concern at a time, re-reading the relevant rubric lines before each part
+generate in dependency order (on Sonnet and below: one concern at a time, re-reading the
+  relevant rubric lines before each part — see Section 4)
 run ONE fresh-eyes judge pass (Section 3 template) over the whole rubric
 fix every finding or justify each in one line; deliver, naming anything unverified
 ```
@@ -150,7 +151,7 @@ vote, and record the dissent. Panels substitute for the taste a stronger model h
 
 ## 4. Weaker-model compensations
 
-Apply these on Sonnet and below. Opus 5 and Fable 5.x self-verify and self-scope
+Apply these on Sonnet and below. Opus (5 and later) and Fable 5.x self-verify and self-scope
 unprompted (see §6); stacking these on top of them produces over-verification.
 
 - **Narrow the aperture.** Cut task width until each step has one deliverable and one rubric
@@ -265,7 +266,7 @@ When a curated library of best-in-class design references is available to you, s
 
 ---
 
-## 6. Model tuning notes (Claude Opus 5 / Fable 5.1, current as of 2026-09)
+## 6. Model tuning notes (Claude Opus 5.5 / Fable 5.1; behavioral notes written against Opus 5)
 
 When YOU are Opus (or when building prompts that run on Opus), these are the known levers:
 
@@ -293,14 +294,16 @@ When YOU are Opus (or when building prompts that run on Opus), these are the kno
   use cream" instructions just shift the default; concrete hex values and named fonts work.
 - For creative variety (no temperature parameter exists on Opus 4.7+): propose 3-4 distinct
   directions with concrete values, pick or ask, then implement only the winner.
-- API calls: `claude-opus-5` (same $5/$25 as 4.8). Thinking is on by default — omit `thinking`
-  or pass `{type: "adaptive"}`; `{type: "disabled"}` 400s above effort `high`.
-  `output_config.effort` of `high` by default and `xhigh` for the hardest coding and agentic
-  work — but sweep downward: `low`/`medium` punch above their weight on Opus 5. Streaming for
-  long outputs, structured outputs via `output_config.format` (never prefills), cache the stable
-  prompt prefix (this protocol and the craft file go first; the volatile task goes last).
-  Handle `stop_reason: "refusal"` — Opus 5 and Fable 5.x carry cyber safety classifiers
-  (documented fallback for both: `claude-opus-4-8`).
+- API calls: `claude-opus-5-5` ($4/$20). Thinking is always on — omit `thinking` or pass
+  `{type: "adaptive"}`; `{type: "disabled"}` and `budget_tokens` 400 at every effort level.
+  `output_config.effort` defaults to `medium` — set it explicitly; sweep `low` for routine
+  steps and reserve `xhigh`/`max` for measured gains. Forced `tool_choice` (`any`/`tool`)
+  400s: use `auto` + `strict: true`. Streaming for long outputs, structured outputs via
+  `output_config.format` (never prefills), cache the stable prompt prefix (this protocol and
+  the craft file go first; the volatile task goes last). Handle `stop_reason: "refusal"` —
+  Opus 5.5 (`cyber`, `bio`, `reasoning_extraction`) and Fable 5.x carry safety classifiers;
+  opt into server-side `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`;
+  `reasoning_extraction` is never retried).
 
 ---
 

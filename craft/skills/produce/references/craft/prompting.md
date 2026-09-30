@@ -68,12 +68,14 @@ features that ship.
 
 ## 4. API mechanics (Claude, current as of 2026-09; verify against live docs when building)
 
-- Model: `claude-opus-5` default ($5/$25 per MTok; carries cyber classifiers — handle
-  `stop_reason: "refusal"`); `claude-fable-5-1` only for the hardest calls ($10/$50; handle
-  `stop_reason: "refusal"` and ship the server-side `fallbacks` parameter).
-- `thinking: {type: "adaptive"}` (on by default on Opus 5; `disabled` 400s above effort `high`);
-  effort via `output_config.effort`: high default, xhigh for the hardest coding and agentic
-  work, low for mechanical subagent steps.
+- Model: `claude-opus-5-5` default ($4/$20 per MTok; carries `cyber`/`bio`/
+  `reasoning_extraction` classifiers); `claude-fable-5-1` only for the hardest calls ($10/$50).
+  On both, handle `stop_reason: "refusal"` and ship the server-side `fallbacks` parameter.
+- Thinking is always on for both (omit `thinking` or send `{type: "adaptive"}`; `disabled`
+  400s). Effort via `output_config.effort`: Opus 5.5 defaults to `medium` — set it
+  explicitly; low for mechanical subagent steps, xhigh/max only for measured gains.
+- Forced `tool_choice` (`any`/`tool`) 400s on both: `auto` + `strict: true`, or structured
+  outputs.
 - No temperature, top_p, top_k on Opus 4.7+ (they 400). No assistant prefills (400): use
   structured outputs.
 - Stream anything long; background long jobs.

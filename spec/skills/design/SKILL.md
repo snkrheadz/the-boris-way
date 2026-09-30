@@ -15,7 +15,7 @@ Spec: $ARGUMENTS
 
 1. **Read only `specs/<id>/requirement.md`.** This is your contract — do not invent requirements not present there.
 2. **Precondition check:** the requirement front-matter must be `status: approved`. If it is still `awaiting-human-gate-1`, stop and tell the user to approve Gate ① first.
-3. **Understand the existing codebase before designing.** Use `codegraph_explore` (not raw file reads) to survey the modules, boundaries, and patterns this change touches. Design *with* the current architecture, not against it.
+3. **Understand the existing codebase before designing.** Survey the modules, boundaries, and patterns this change touches — with `codegraph_explore` when a codegraph index exists (cheaper than a read loop), otherwise with Grep/Glob and targeted reads. Design *with* the current architecture, not against it.
 4. **Write `specs/<id>/design.md`** in the format below.
 5. **Stop at the gate.** Print the path, the key design decisions (and the alternatives rejected), and the next command. Do not start tasks or code.
 
@@ -41,7 +41,7 @@ status: awaiting-human-gate-2   # → approved (set by human)
 - 判断: <choice> / 理由: <why> / 却下案: <alternative and why not>
 
 ## 既存コードへの影響（blast radius）
-<modules/files affected, migrations, breaking changes — from codegraph>
+<modules/files affected, migrations, breaking changes — from the survey>
 
 ## 受け入れ条件 → 設計 の対応表
 | requirement の受け入れ条件 | それを満たす設計要素 |

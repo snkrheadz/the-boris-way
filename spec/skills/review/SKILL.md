@@ -2,7 +2,7 @@
 name: review
 description: "Critically review an implementation against its spec via an isolated-context subagent, and write review.md before the PR gate. Triggers: /spec:review, spec review, review implementation, adversarial review, review.md"
 user-invocable: true
-allowed-tools: Read, Write, Bash, Grep, Glob, Task, Skill
+allowed-tools: Read, Write, Bash, Grep, Glob, Agent, Skill
 model: opus
 ---
 

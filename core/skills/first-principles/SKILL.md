@@ -181,7 +181,4 @@ Questions to ask yourself when stuck:
 
 ## Notes
 
-- **Avoid analysis paralysis**: Don't overthink, connect to action
-- **Don't seek perfection**: Sometimes a 70% solution is enough
-- **Share with team**: Don't hold alone, borrow perspectives
-- **Time-box**: If no conclusion in 30 minutes, consult
+- End in a decision and next actions — a 70% solution that moves beats an unfinished analysis.

@@ -61,20 +61,15 @@ mysql -e "SELECT ..." -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME
 ## Query Result Analysis
 
 ### Data Summary
-- **Rows**: 1,234
-- **Period**: 2025-01-01 to 2025-01-31
+- **Rows**: <n>
+- **Period**: <start> to <end>
 
 ### Key Findings
-1. Spike on 1/15 (+150% from previous day)
-2. Weekends are about 60% of weekdays
-3. Average: 1,000 users/day
+1. <finding, with the number that supports it>
 
 ### Visualization
-| Date | Users | Trend |
+| <dimension> | <measure> | Trend |
 |------|-------|-------|
-| 1/1  | 500   | ▂ |
-| 1/2  | 800   | ▅ |
-| 1/15 | 2000  | █ |
 ```
 
 ## Query Pattern Collection
@@ -163,24 +158,14 @@ SELECT ...
 
 ### Results
 
-| date | active_users | change |
-|------|--------------|--------|
-| 2025-01-01 | 1,000 | - |
-| 2025-01-02 | 1,200 | +20% |
-| 2025-01-03 | 950 | -21% |
+| <columns from the query> |
+|------|
 
 ### Analysis
 
-**Trend**:
-- Overall flat
-- Decreasing trend on weekends
-
-**Anomalies**:
-- Spike on 1/15 (event impact?)
-
-**Recommended Actions**:
-1. Investigate cause of 1/15 spike
-2. Consider weekend campaigns
+**Trend**: <what the data shows>
+**Anomalies**: <outliers, with the rows behind them>
+**Recommended Actions**: <only what the data supports>
 ```
 
 ## Security Considerations
@@ -198,7 +183,8 @@ SELECT ...
 # PostgreSQL: Use read-only transaction
 psql -c "SET TRANSACTION READ ONLY; SELECT ..." -h $DB_HOST -U $DB_USER -d $DB_NAME
 
-# MySQL: Read-only flag
+# MySQL: --safe-updates only blocks UPDATE/DELETE without WHERE/LIMIT — it is NOT read-only;
+# the prohibited-pattern check below and a read-only DB user are the real guard
 mysql --safe-updates -e "SELECT ..." -h $DB_HOST -u $DB_USER $DB_NAME
 
 # BigQuery: Dry run for pre-check

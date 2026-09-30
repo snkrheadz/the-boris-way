@@ -9,8 +9,6 @@ context: fork
 
 You generate **HTML artifacts** instead of Markdown when richer expression, easier sharing, or interactivity helps the reader. Inspired by Thariq's "The Unreasonable Effectiveness of HTML" (https://thariqs.github.io/html-effectiveness/).
 
-Do NOT introduce yourself or explain. Execute the steps below.
-
 ## Philosophy
 
 - HTML > Markdown when: doc exceeds ~100 lines, needs diagrams/diffs/tables, will be shared across teams, or benefits from interaction (sliders, drag-drop, live preview).
@@ -19,7 +17,7 @@ Do NOT introduce yourself or explain. Execute the steps below.
 
 ## Step 1: Resolve mode
 
-If the user passed an argument, parse it as `<mode> [<topic or path>]`. Otherwise ask **once** which mode applies, then proceed.
+If the user passed an argument, parse it as `<mode> [<topic or path>]`. Otherwise infer the mode from the request (this runs in a forked context with no user to ask) and name the choice in the report.
 
 | mode | When to pick | Example trigger |
 |---|---|---|
@@ -41,9 +39,9 @@ Mode-specific. Run gathering tools **in parallel** where independent.
 
 If a `design-system.html` was found, the artifact MUST inherit its visual style.
 
-## Step 3: Plan structure (silent — do not output)
+## Step 3: Required elements per mode
 
-Mentally check off the **required elements for this mode** before writing a single tag.
+The artifact must contain every element listed for its mode.
 
 ### mode: `spec`
 - [ ] Header: goal, constraints, non-goals
@@ -118,30 +116,3 @@ Then output a short report:
 - Share: upload to S3 / GitHub Pages for a link
 - Iterate: derive a `<other-mode>` artifact from the same context
 ```
-
-## Sample prompts (paste-ready)
-
-Borrowed from Thariq's article — adapt freely.
-
-- **spec**: "I'm not sure what direction to take the onboarding screen. Generate 6 distinctly different approaches — vary layout, tone, and density — and lay them out as a single HTML file in a grid so I can compare them side by side. Label each with the tradeoff it's making."
-- **review**: "Help me review this PR. Render the actual diff with inline margin annotations, color-code findings by severity, and focus on the streaming/backpressure logic since I'm unfamiliar with it."
-- **design**: "Prototype a checkout button that plays an animation then turns purple on click. Give me sliders for duration/easing/color and a copy button to export the chosen parameters."
-- **report**: "I don't understand how our rate limiter actually works. Read the relevant code and produce a single HTML explainer page with a token-bucket diagram, 3–4 annotated code snippets, and a gotchas section."
-- **editor**: "Here are 30 Linear tickets. Build me a draggable Now/Next/Later/Cut board pre-sorted by your best guess, with a 'copy as markdown' button that exports the final ordering plus a one-line rationale per bucket."
-
-## FAQ
-
-**Why a skill if Thariq says "don't make a skill"?**
-The skill is a *checklist* — it never templates HTML. It exists so each mode reliably ships its non-obvious requirements (e.g. `editor` always has an export button). Pure prompting works too.
-
-**Token cost?**
-HTML costs 2–4× more tokens than Markdown to generate. Worth it for `spec`/`review`/`report`/`editor`. Skip for short answers.
-
-**Version control?**
-Don't commit `artifacts/`. HTML diffs are noisy. Add `artifacts/` to `.gitignore` once.
-
-**Sharing?**
-S3 + signed URL, or GitHub Pages, or `python3 -m http.server` for quick local sharing.
-
-**Style consistency across artifacts?**
-Maintain a `~/.claude/design-system.html` with your tokens (colors, type scale, spacing). This skill auto-references it when present.

@@ -9,7 +9,7 @@ context: fork
 
 > **Loop fit:** bounded / condition-driven → drive with `/goal` (end state: tests pass & lint clean).
 
-You are a test execution and auto-repair tool. Do NOT introduce yourself or ask questions. Execute the steps below IMMEDIATELY using tools.
+You are a test execution and auto-repair tool. This runs in a forked context with no user to answer questions: resolve ambiguity from the arguments and the repo.
 
 If the user provided arguments, interpret them as: a test command override or `--dry-run` flag (preview fixes only, don't apply).
 
@@ -43,13 +43,6 @@ Read the error output and identify:
 1. Which test files failed and why
 2. Which source files need fixing
 3. The root cause (type error, null reference, import missing, etc.)
-
-Common patterns:
-- `TS2322` / type mismatch → fix type definition
-- `Cannot find name` / `undefined:` → add import or declaration
-- `ModuleNotFoundError` → fix import or add dependency
-- `AttributeError` → add method/attribute
-- `AssertionError` → fix logic in source
 
 Read the relevant source files, then apply fixes using Edit tool.
 

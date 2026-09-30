@@ -342,7 +342,7 @@ the-boris-way/
 ### Every skill/agent declares an explicit `model:` pin
 
 Cost and behavior stay invariant whether the main session runs **Fable 5.x** (5 / 5.1,
-2× Opus 5 cost, no fast mode) or **Opus 5** — an unpinned skill/agent inherits the
+$10/$50 — 2.5× Opus 5.5, no fast mode) or **Opus 5.5** — an unpinned skill/agent inherits the
 main-session model, which on a Fable session silently buys top-tier reasoning (at
 top-tier cost) for work that doesn't need it. Pick the cheapest model that does the job:
 `haiku` for lookups and mechanical checks, `sonnet` for normal procedures, `opus` only
@@ -359,7 +359,7 @@ The `model:` pin also decides how detailed the instructions should be
   skill) — write constraints, boundaries, and verification gates only. Skip
   procedural micro-steps: frontier models produce *worse* output when over-instructed.
 - **Never instruct a skill/agent to echo or transcribe its internal reasoning** — on
-  Fable-class models (5 / 5.1) this can trigger `reasoning_extraction` refusals
+  Fable 5.x, Opus 5.5 and Sonnet 5.5 this can trigger `reasoning_extraction` refusals
   (`stop_reason: refusal`). If visibility is needed, report *evidence from tool
   results* instead of thought processes.
 

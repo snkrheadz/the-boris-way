@@ -32,5 +32,3 @@ For each step, show:
 ## Don't
 
 - Don't start fixing until the full chain is traced
-- Don't patch symptoms - find the root cause
-- Don't assume - verify each step with actual code

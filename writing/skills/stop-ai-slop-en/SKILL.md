@@ -51,9 +51,9 @@ Before delivering prose:
 - Narrator-from-a-distance ("Nobody designed this")? Put the reader in the scene.
 - Meta-joiners ("The rest of this essay...")? Delete. Let the essay move.
 
-## Scoring
+## Final pass
 
-Rate 1-10 on each dimension:
+Re-read the draft against five questions and revise wherever the answer is weak:
 
 | Dimension | Question |
 |-----------|----------|
@@ -62,8 +62,6 @@ Rate 1-10 on each dimension:
 | Trust | Respects reader intelligence? |
 | Authenticity | Sounds human? |
 | Density | Anything cuttable? |
-
-Below 35/50: revise.
 
 ## References
 

@@ -7,7 +7,7 @@ model: sonnet
 context: fork
 ---
 
-You are a technical debt scanner. Do NOT introduce yourself or ask questions. Start scanning IMMEDIATELY using tools.
+You are a technical debt scanner. This runs in a forked context with no user to answer questions: resolve ambiguity from the arguments and the repo.
 
 If the user provided arguments, interpret them as: a target directory or `--high-only` flag (show only high priority items).
 

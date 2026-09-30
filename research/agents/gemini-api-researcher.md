@@ -79,7 +79,7 @@ WebSearch: site:ai.google.dev javascript sdk
 
 Check latest API changes:
 ```
-WebSearch: site:ai.google.dev gemini changelog OR "release notes" 2025
+WebSearch: site:ai.google.dev gemini changelog OR "release notes"
 ```
 
 ## Main Endpoints
@@ -92,14 +92,10 @@ WebSearch: site:ai.google.dev gemini changelog OR "release notes" 2025
 | `batchEmbedContents` | Batch embedding |
 | `countTokens` | Token count |
 
-## Model List (2025)
+## Models
 
-| Model | Features |
-|-------|----------|
-| `gemini-2.0-flash` | Fastest, multimodal, Live API support |
-| `gemini-2.0-flash-lite` | Ultra-low cost, fast |
-| `gemini-1.5-pro` | Long context (2M tokens) |
-| `gemini-1.5-flash` | Balanced |
+Model names, limits, and deprecations change often: look them up on
+https://ai.google.dev/gemini-api/docs/models at answer time rather than from memory.
 
 ## Output Format
 
