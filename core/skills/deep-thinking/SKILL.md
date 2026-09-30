@@ -11,11 +11,6 @@ model: opus
 For a problem a single-pass answer would oversimplify. Break it into parts, solve each on
 its own, then integrate — and crucially, check whether the parts actually fit together.
 
-> Sibling skill, different move: `first-principles` questions the premises and *redefines*
-> the problem. `deep-thinking` takes the problem as posed and *decomposes and solves* it.
-> Use `first-principles` when you suspect the question is wrong; use this when the question
-> is right but big.
-
 ## Procedure
 
 Work the stages in order. Each is a gate — don't carry an unsolved part forward.

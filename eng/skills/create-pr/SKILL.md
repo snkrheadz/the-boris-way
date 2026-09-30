@@ -3,6 +3,7 @@ name: create-pr
 description: "Sync the base branch from origin, merge it into the current branch, then open a PR against the correct base. Prevents PRs created on a stale base from a git worktree. Triggers: /eng:create-pr, create PR, open pull request, gh pr create"
 user-invocable: true
 allowed-tools: Bash
+# no model: pin — runs on the main session: it pushes and opens the PR from the live checkout
 ---
 
 # /eng:create-pr
@@ -82,4 +83,4 @@ gh pr create --base "$base" --fill   # or --title/--body when you have them
   commit from origin's base, so no `--force-with-lease` is ever required.
 - Conflicts are a stop condition, not something to auto-resolve. Surface them and wait.
 - After the PR merges, clean up with `gh pr merge <n> --merge --delete-branch` then the
-  official `/clean_gone` command (removes the now-`[gone]` local branch and its worktree).
+  `/clean_gone` command from the official `commit-commands` plugin (removes the now-`[gone]` local branch and its worktree).

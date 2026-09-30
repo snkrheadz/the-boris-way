@@ -1,6 +1,6 @@
 {
   "name": "pm",
-  "description": "PM / business assets maintained by snkrheadz: 業務定義シート (task definition sheet) as A4 HTML. Pair with phuryn/pm-skills for the full product lifecycle.",
+  "description": "PM / business assets maintained by snkrheadz: 業務定義シート (task definition sheet) as A4 HTML. Pair with the pm-* plugins (phuryn/pm-skills, proxied in this catalog) for the full product lifecycle.",
   "version": "0.1.1",
   "author": { "name": "snkrheadz" },
   "license": "MIT"

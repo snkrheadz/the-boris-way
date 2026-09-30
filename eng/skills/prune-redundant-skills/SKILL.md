@@ -3,6 +3,7 @@ name: prune-redundant-skills
 description: "Audit this marketplace's skills/agents against Claude Code's official built-in commands and plugins, remove the ones whose real value is already covered, then fix every dependent file (README, plugin.json, marketplace.json, cross-skill links). Triggers: /eng:prune-redundant-skills, prune redundant skills, audit skills against official commands, remove duplicate skills, drop skills covered by official commands"
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Bash, Edit, AskUserQuestion
+# no model: pin — runs on the main session: it confirms deletions with the user
 ---
 
 # /eng:prune-redundant-skills
@@ -57,8 +58,8 @@ For each local skill, compare its non-trivial core against the baseline:
 
 - **Redundant → remove.** The official command/skill performs the *same non-trivial work*.
   A thin wrapper over `gh`/`git` plus an official command counts as redundant — e.g. a
-  "merge PR + clean worktree" skill is just `gh pr merge --delete-branch` + the official
-  `/clean_gone`.
+  "merge PR + clean worktree" skill is just `gh pr merge --delete-branch` + `/clean_gone` from the
+  official `commit-commands` plugin.
 - **Builds on top of → keep.** It composes or extends a built-in rather than re-implementing
   it — e.g. `review-inbox` triages reviewer-assigned PRs and posts confirmed comments
   *using* `/code-review`. Keep these and make sure their docs say *how* they extend it.

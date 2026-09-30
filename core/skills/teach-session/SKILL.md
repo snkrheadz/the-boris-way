@@ -3,6 +3,7 @@ name: teach-session
 description: "Teach the user to deeply understand the work done this session (a change, PR, bug fix, or feature). Incremental, mastery-gated tutoring with quizzes. Triggers: /core:teach-session, teach me this, help me understand the session, explain what we did, onboard me to these changes"
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, AskUserQuestion
+# no model: pin — runs on the main session: it quizzes the user turn by turn
 ---
 
 # Teach Session

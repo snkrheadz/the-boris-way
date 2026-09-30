@@ -41,7 +41,7 @@ Entry format:
   linter or secret-scanner exclusions widened, verify script's own checks deleted or
   its SKIP conditions broadened.
 - Fix route: add a weakening-judgement step to the repo's verification skill
-  (reference shape: laptop repo `.claude/skills/verify-work/SKILL.md`). If no
+  (reference shape: this marketplace's `/eng:verify-work`, `eng/skills/verify-work/SKILL.md`). If no
   verification skill exists, fix P1 first — this step lives inside it.
 
 ## P3 — Must-not-skip rules are hooks, not prose

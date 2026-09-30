@@ -40,8 +40,7 @@ coordinated multi-role → Team; wide fan-out + verify/synthesize → Workflow.
 - **Web fan-out is serial, not parallel.** Many concurrent `WebFetch` calls or parallel
   research subagents against one host trip CDN rate limits and bot detection, which
   slows the whole job. Launch web-research subagents one at a time; triage with
-  `WebSearch`, then fetch only a curated few; prefer typed channels (the `research`
-  pack's researchers) over raw scraping.
+  `WebSearch`, then fetch only a curated few.
 
 ### Model routing
 - Pin `model:` explicitly when delegating — subagents inherit the main-session model
