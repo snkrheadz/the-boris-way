@@ -55,7 +55,7 @@ How much time the user realistically has to adapt (a range, with uncertainty), t
 
 ## Output
 
-Default to a Markdown report (offer `/core:html-output` if installed). For a file, resolve
+Default to a Markdown report (offer an HTML page / Artifact if the user wants to share it). For a file, resolve
 `ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"` and save under `$ROOT/docs/`.
 
 ```

@@ -3,7 +3,7 @@ name: produce
 description: "Produce any deliverable at frontier quality: rubric before artifact, best-of-N candidates for creative work, fresh-eyes verify sweeps (craft:verifier agent), and a taste gate (craft:taste-judge agent), backed by 21 domain craft standards. Three modes: quick (one judged pass, works even as a single response), full (default: convergence loop + taste gate), gate (judge existing work only, nothing produced). DISTILL findings are banked into this project's tasks/craft-standards/<domain>.md, never into the pack's own bundled craft files. Triggers: frontier quality, flawless, world class, best possible, loop until perfect, craft standard, produce this properly, /craft:produce"
 argument-hint: "[deliverable] [quick|full|gate]"
 user-invocable: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 model: opus
 context: fork
 metadata:
@@ -40,7 +40,8 @@ the bundled files.
 4. Fresh eyes find defects; authors defend them.
 5. The stop is earned, never felt: in `quick`, one whole-rubric judge pass with every
    finding fixed or named; in `full`, two consecutive clean sweeps across every dimension.
-6. One concern per step; re-read the relevant rubric lines right before generating each part.
+6. Work in dependency order; on Sonnet and below add the protocol.md §4 compensations
+   (one concern per step, re-read the governing rubric lines before each part).
 7. Ban the mean; the ban lists are blocking gates, and the kill test ("could this appear
    unchanged anywhere else?") is applied to every visual and every sentence that matters.
 8. Concrete beats abstract, in instructions received and rules applied.
@@ -105,8 +106,9 @@ distribution, which is where frontier-grade output lives.
 
 ## Phase 2: Produce
 
-One concern per step, in dependency order. Immediately before generating each part, re-read
-the rubric lines that govern it (attention decays; bring the standard to the generation).
+Work in dependency order. When this runs on Sonnet or below, also apply protocol.md §4 (one
+concern per step; re-read the governing rubric lines before each part). On Opus and Fable skip
+them: stacked on the model's own self-verification they cause over-verification.
 Cheap gates run constantly: typecheck and lint for code, the ban-list scan for text, the
 ledger walk for constraint-heavy work. Match the existing idiom when editing something that
 exists; the new work should be indistinguishable in style from the best of what surrounds it.

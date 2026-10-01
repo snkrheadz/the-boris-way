@@ -27,7 +27,7 @@ Target: $ARGUMENTS  （空なら `.` = カレントリポジトリ）
    - build (`make`, `npm run build`, `cargo build`)
    - CI definition (`.github/workflows/*`, etc.) — does CI run the same commands a local agent could?
    - Then **apply the Honk gate as defined in `rubric.md`**: if no agent-invokable verify command exists at all, the verdict is fixed before any scoring (the rubric states the exact rule and its consequence).
-3. **Score the three pillars (A / B / C), each 0–5, per the definitions in `rubric.md`.** Use `codegraph_explore` (not raw file reads) to survey structure and consistency — it is the pre-built index, far cheaper than a grep/read loop. Score against the rubric's criteria; do not redefine them here.
+3. **Score the three pillars (A / B / C), each 0–5, per the definitions in `rubric.md`.** Survey structure and consistency with `codegraph_explore` when a codegraph index exists (far cheaper than a grep/read loop); otherwise with Grep/Glob and targeted reads. Score against the rubric's criteria; do not redefine them here.
 4. **Rank the backlog by ROI.** For each gap, estimate `impact` (how much it unblocks autonomous/agent work) and `effort`, and sort by impact/effort. The verify-loop gap, if present, dominates.
 5. **Write `specs/<YYYY-MM-DD>-scan/scan.md`** in the format below. Use today's date; create the directory.
 6. **Stop at the gate.** Print the scorecard, the agent-ready verdict, and the exact next command for the top intent. Do not start requirements yourself.
@@ -75,7 +75,7 @@ agent_ready: <yes | no>   # no if Pillar B has no agent-invokable verify loop
 ## Rules
 
 - **The Honk gate and the scoring criteria live in `rubric.md` — apply them, don't restate them.** That file is the single source; the gate (no agent-invokable verify loop → `agent_ready: no`, backlog #1) and the three pillars are defined there. If the criteria change, change them there.
-- **Observe, don't guess.** Every score must cite something you actually ran or read via `codegraph` (a command's output, a concrete naming divergence). "Feels inconsistent" is not a finding.
+- **Observe, don't guess.** Every score must cite something you actually ran or read (a command's output, a concrete naming divergence). "Feels inconsistent" is not a finding.
 - **Intents stay at intent altitude.** Each backlog row is a one-line problem statement — no file paths, no design, no tech choices. Those belong to `/spec:requirement` and downstream.
 - **Scan only.** Do not fix anything, do not write requirement.md. This phase produces `scan.md` and a ranked list of intents — nothing else.
 

@@ -1,6 +1,6 @@
 ---
 name: verify-work
-description: "Closing-gate verification before declaring work done: run the repo's verify entrypoint (scripts/verify.sh by convention) and judge the diff for weakened tests or gates. Reports pass/fail with evidence; never fixes — for the repair loop after a FAIL use /eng:test-and-fix instead; to observe a change working in the running app use the official /verify. Triggers: /eng:verify-work, verify work, closing gate, verify before PR, done宣言前, 完了確認, PR前チェック"
+description: "Closing-gate verification before declaring work done: run the repo's verify entrypoint (scripts/verify.sh by convention) and judge the diff for weakened tests or gates. Reports pass/fail with evidence; never fixes — a FAIL goes back to the main session to repair; to observe a change working in the running app use the official /verify. Triggers: /eng:verify-work, verify work, closing gate, verify before PR, done宣言前, 完了確認, PR前チェック"
 user-invocable: true
 allowed-tools: Bash, Read, Grep, Glob
 model: opus
@@ -51,5 +51,5 @@ weakening = pass. Either missing = fail, with the evidence.
 
 ## Repair
 
-This skill never fixes. A FAIL hands off to `/eng:test-and-fix`; for shell scripts
+This skill never fixes. A FAIL goes back to the main session to repair; for shell scripts
 run `shellcheck -x` and `bash -n` directly.

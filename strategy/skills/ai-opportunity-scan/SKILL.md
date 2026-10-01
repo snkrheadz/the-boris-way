@@ -63,7 +63,7 @@ improvement. Name which ideas are 10x vs merely 10%.
 
 ## Output
 
-Default to a Markdown report (offer `/core:html-output` if installed). For a file, resolve
+Default to a Markdown report (offer an HTML page / Artifact if the user wants to share it). For a file, resolve
 `ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"` and save under `$ROOT/docs/`.
 
 ```

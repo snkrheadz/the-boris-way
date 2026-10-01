@@ -44,7 +44,6 @@ philosophy) through a plugin, so those go through a separate channel.
 
 What Core ships (role-agnostic):
 
-- `first-principles` — rethink a problem from fundamentals
 - `honest-reasoning` — answer a high-stakes question with per-claim confidence labels, a steelman counter-case, and a weakest-link self-critique
 - `deep-thinking` — crack a problem too complex for one pass: decompose, solve each part, integrate, check the seams
 - `life-decision` — think through a big personal decision under Helpful/Honest/Harmless principles
@@ -53,7 +52,6 @@ What Core ships (role-agnostic):
 - `promote-to-code` — move a repo's deterministic prose rules out of CLAUDE.md into an enforcement mechanism (hook / CI / verify script); a bundled `audit.sh` detects candidates, the skill makes the promotion judgement and deletes the prose in the same change
 - `context-audit` — audit a repo's `.claude/` context against the pack's evolving `principles.md` (does verification auto-fire? are green gates checked for weakening? are must-not-skip rules hooks? is "a human must approve" left as judgement rather than mis-reported as a hook gap? does each path-scoped rule load where its violation gets written?); reports gaps with evidence and routes each fix to `tune-claude-md` / `promote-to-code`
 - `config-retest` — the 6-monthly delete-and-retest: delete a repo's CLAUDE.md/skills/hooks in a worktree, re-run a real task in a fresh session, keep only what changed behavior or cannot be derived, PR the pruned config with the evidence table
-- `html-output` — emit specs / reviews / reports as rich HTML
 - `pre-tool-guard` hook — block access to sensitive files (defense in depth)
 - `stop-verify-gate` hook — when a session edited files but never ran the repo's
   `scripts/verify.sh` closing gate, block the stop ONCE and ask for the gate to be run
@@ -94,10 +92,10 @@ Skills (1): `task-definition-sheet` — the 業務定義シート (task definiti
 This pack deliberately **does not** re-implement review/simplify/verify/commit — those are
 official commands now (see below). It ships the workflow gaps around them:
 
-- Skills (9): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
-  `test-and-fix` `verify-work` `techdebt` `trace-dataflow` `db-query`
-- Agents (7): `code-architect` `architecture-reviewer`
-  `migration-assistant` `oncall-guide` `state-machine-diagram`
+- Skills (5): `create-pr` `new-skill` `prune-redundant-skills` `review-inbox`
+  `verify-work`
+- Agents (5): `architecture-reviewer`
+  `migration-assistant` `state-machine-diagram`
   `aws-best-practices-advisor` `gcp-best-practices-advisor`
 
 Recommended alongside the official LSP plugins:
@@ -117,22 +115,6 @@ is bounded to one open PR per loop. This is the CI-resident complement to the cl
 /plugin install design-control-loop@the-boris-way   # interview → design → build the loop, tailored to your repo's tooling
 # lighter, no interview: build-iterated-agentic-loop — upstream only: /plugin marketplace add humanlayer/skills
 ```
-
-#### Research (role-agnostic, optional)
-
-For anyone investigating AI/ML papers, APIs, and models — any role can add it.
-
-```
-/plugin install research@the-boris-way
-```
-
-Agents (4): `arxiv-ai-researcher` (paper discovery & synthesis),
-`gemini-api-researcher` (Gemini API capabilities & usage),
-`huggingface-spaces-researcher` (HF Spaces / model discovery),
-`verify-subagent-result` (cross-validates subagent findings against independent
-sources — invoke it explicitly when you judge a result mid-confidence, roughly
-50–69/100; nothing emits that score automatically. Also audits an implementation
-subagent's completion claim against its actual diff via a fake-done checklist).
 
 #### Strategy (role-agnostic, optional)
 
@@ -168,7 +150,7 @@ examples. Derived from [hardikpandya/stop-slop](https://github.com/hardikpandya/
 
 The spec pipeline — take a change from a one-line intent (or a repo audit) to a mergeable
 PR through human-gated phases. Verification-first, one phase per command. Pairs with **eng**
-(`/eng:create-pr`, `/eng:test-and-fix`).
+(`/eng:create-pr`, `/eng:verify-work`).
 
 ```
 /plugin install spec@the-boris-way
@@ -241,6 +223,9 @@ Use the official commands directly:
 | Commit | Claude Code commits natively (or the `commit-commands` plugin) |
 | Initialize `CLAUDE.md` / project config | `/init`, the `update-config` skill |
 | Claude Code / Agent SDK / API how-to | the official `claude-code-guide` agent |
+| Design an implementation / architecture plan | the built-in `Plan` agent (pair with `eng:architecture-reviewer` to critique the diff) |
+| Rich HTML page instead of Markdown | Artifacts (the built-in `Artifact` tool, where your account offers it) |
+| Run tests and fix failures until green | the main session does this unprompted (`/goal <tests pass>` to hold it to the end state); close with `/eng:verify-work` |
 
 The `eng` pack's `review-inbox` builds **on top of** `/code-review` (it triages the PRs where
 you are the requested reviewer and posts human-confirmed comments), rather than replacing it.
@@ -313,20 +298,19 @@ Now everyone is "same environment, immediately."
 
 ```
 the-boris-way/
-├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, research, strategy, writing, spec, craft) + pinned proxies of third-party plugins
+├── .claude-plugin/marketplace.json   # catalog (core, pm, eng, strategy, writing, spec, craft) + pinned proxies of third-party plugins
 ├── .claude/                          # maintainer agent team + maintenance loop (not distributed)
 ├── CLAUDE.md                         # maintainer's map (auto-loaded when working ON this repo)
 ├── scripts/validate.sh              # closing gate: JSON, version agreement, skill frontmatter
 ├── core/                             # role-agnostic plugin
 │   ├── .claude-plugin/plugin.json
-│   ├── skills/                       # first-principles, honest-reasoning, deep-thinking, life-decision,
-│   │                                 #   teach-session, tune-claude-md, promote-to-code, context-audit, config-retest, html-output
+│   ├── skills/                       # honest-reasoning, deep-thinking, life-decision,
+│   │                                 #   teach-session, tune-claude-md, promote-to-code, context-audit, config-retest
 │   └── hooks/                        # pre-tool-guard.sh + stop-verify-gate.sh (+ tests) + hooks.json
 ├── pm/                               # PM role pack (our own assets)
 │   ├── .claude-plugin/plugin.json
 │   └── skills/task-definition-sheet/
-├── eng/                              # engineering pack (skills 9 + agents 7)
-├── research/                         # research pack (arxiv / gemini / huggingface / verify)
+├── eng/                              # engineering pack (skills 5 + agents 5)
 ├── strategy/                         # AI-era personal strategy (career / industry / opportunity)
 ├── writing/                          # de-AI-ify drafts (stop-ai-slop-jp / -en)
 ├── spec/                             # spec-driven pipeline (scan → … → review)
@@ -339,14 +323,17 @@ the-boris-way/
 
 ## Authoring conventions
 
-### Every skill/agent declares an explicit `model:` pin
+### Every skill/agent declares an explicit `model:` pin (or says why it doesn't)
 
 Cost and behavior stay invariant whether the main session runs **Fable 5.x** (5 / 5.1,
-2× Opus 5 cost, no fast mode) or **Opus 5** — an unpinned skill/agent inherits the
+$10/$50 — 2.5× Opus 5.5, no fast mode) or **Opus 5.5** — an unpinned skill/agent inherits the
 main-session model, which on a Fable session silently buys top-tier reasoning (at
 top-tier cost) for work that doesn't need it. Pick the cheapest model that does the job:
 `haiku` for lookups and mechanical checks, `sonnet` for normal procedures, `opus` only
-where judgment matters.
+where judgment matters. Leave the pin off only for a skill that must run on the main
+session (it waits on the live session, talks to the user, or opens the PR — e.g.
+`create-pr`, `teach-session`, `config-retest`) and say so near its frontmatter;
+`validate.sh` warns on every unpinned skill so the choice stays visible.
 
 ### Instruction density follows the model pin
 
@@ -355,11 +342,14 @@ The `model:` pin also decides how detailed the instructions should be
 
 - **Pinned to `sonnet` / `haiku`** — detailed step-by-step procedures are an asset.
   These models still benefit from explicit steps; keep them.
-- **Runs on the main-session model** (no pin, or the orchestrating part of a fan-out
-  skill) — write constraints, boundaries, and verification gates only. Skip
+- **Pinned to `opus`, or runs on the main-session model** (no pin, or the orchestrating
+  part of a fan-out skill) — write constraints, boundaries, and verification gates only. Skip
   procedural micro-steps: frontier models produce *worse* output when over-instructed.
+  Exception: a fragile operation where exactly one sequence is safe (pushing and opening
+  a PR, deleting published skills — `create-pr`, `prune-redundant-skills`) keeps its
+  exact steps whatever the pin.
 - **Never instruct a skill/agent to echo or transcribe its internal reasoning** — on
-  Fable-class models (5 / 5.1) this can trigger `reasoning_extraction` refusals
+  Fable 5.x, Opus 5.5 and Sonnet 5.5 this can trigger `reasoning_extraction` refusals
   (`stop_reason: refusal`). If visibility is needed, report *evidence from tool
   results* instead of thought processes.
 
@@ -371,7 +361,7 @@ The `model:` pin also decides how detailed the instructions should be
   `marketplace.json` if needed → commit & push.
 - Run the closing gate before pushing: `bash scripts/validate.sh` (JSON validity,
   `plugin.json`↔`marketplace.json` version agreement, and every skill's frontmatter —
-  `name`, a `Triggers:` description, a `model:` pin). It also runs
+  `name` and a `Triggers:` description fail the gate; a missing `model:` pin warns). It also runs
   `claude plugin validate .`.
 - **Bump the pack version on every content change** — in *both* the pack's
   `plugin.json` and its `marketplace.json` entry (they must agree;
@@ -386,7 +376,8 @@ The `model:` pin also decides how detailed the instructions should be
 - Recurring upkeep runs as an agent team: `/maintain-marketplace` (`.claude/skills/`)
   fans out the maintainer trio in `.claude/agents/` (gap-analyst / quality / ops),
   applies convention-backed fixes, and closes with the gate. Schedule it as a routine
-  for unattended runs — philosophy backports are always proposed, never auto-applied.
+  for unattended runs — changes to `shared/CLAUDE.md` or the authoring conventions are
+  always proposed, never auto-applied.
 - **`shared/CLAUDE.md` is a fork point.** If your personal `~/.claude/CLAUDE.md` gains a
   team-relevant rule, backport it here — otherwise consumers drift behind the working
   philosophy this repo claims to distribute. Checking is one command:

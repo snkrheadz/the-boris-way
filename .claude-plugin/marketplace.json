@@ -8,8 +8,8 @@
     {
       "name": "core",
       "source": "./core",
-      "description": "Cross-role foundation for everyone: first-principles + honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, rich HTML output, a CLAUDE.md tuner, a prose-rule-to-enforcement promoter and a principles-driven context auditor (Boris-way), and the sensitive-file guard + stop-time verify-gate hooks. Install this first, whatever your role.",
-      "version": "0.11.4",
+      "description": "Cross-role foundation for everyone: honest-reasoning + deep-thinking, life-decision support, teaching/onboarding, a CLAUDE.md tuner, a prose-rule-to-enforcement promoter and a principles-driven context auditor (Boris-way), and the sensitive-file guard + stop-time verify-gate hooks. Install this first, whatever your role.",
+      "version": "0.11.5",
       "author": {
         "name": "snkrheadz"
       }
@@ -17,8 +17,8 @@
     {
       "name": "pm",
       "source": "./pm",
-      "description": "PM / business assets maintained by snkrheadz: the 業務定義シート (task definition sheet) as A4 HTML. Pairs with the external phuryn/pm-skills marketplace for the full PM lifecycle.",
-      "version": "0.1.0",
+      "description": "PM / business assets maintained by snkrheadz: the 業務定義シート (task definition sheet) as A4 HTML. Pairs with the pm-* entries in this catalog (proxied from phuryn/pm-skills) for the full PM lifecycle.",
+      "version": "0.1.1",
       "author": {
         "name": "snkrheadz"
       }
@@ -26,17 +26,8 @@
     {
       "name": "eng",
       "source": "./eng",
-      "description": "Engineering workflow pack that fills gaps the official commands don't cover: create-pr, new-skill, prune-redundant-skills, review-inbox, test-and-fix, verify-work, techdebt, trace-dataflow, db-query, plus code-architect, architecture-reviewer, migration, oncall and AWS/GCP advisor agents.",
-      "version": "0.7.0",
-      "author": {
-        "name": "snkrheadz"
-      }
-    },
-    {
-      "name": "research",
-      "source": "./research",
-      "description": "Research pack: arxiv-ai-researcher, gemini-api-researcher, huggingface-spaces-researcher and verify-subagent-result agents for AI/ML paper, API and model discovery plus cross-validation of subagent findings. Role-agnostic — for anyone investigating AI/ML papers, APIs and models.",
-      "version": "0.2.1",
+      "description": "Engineering workflow pack that fills gaps the official commands don't cover: create-pr, new-skill, prune-redundant-skills, review-inbox, verify-work, plus architecture-reviewer, migration, state-machine and AWS/GCP advisor agents.",
+      "version": "0.7.1",
       "author": {
         "name": "snkrheadz"
       }
@@ -45,7 +36,7 @@
       "name": "strategy",
       "source": "./strategy",
       "description": "Personal strategy for the AI-driven shift in work: audit your role's AI exposure (career-ai-scan), map your industry's transformation (industry-ai-map), and find where your expertise x AI opens opportunity (ai-opportunity-scan). Role-agnostic, honest about uncertainty.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "snkrheadz"
       }
@@ -54,7 +45,7 @@
       "name": "writing",
       "source": "./writing",
       "description": "Writing pack: strip AI tells from drafts before publishing. stop-ai-slop-jp (Japanese) and stop-ai-slop-en (English) catch predictable AI phrasing, false agency, propositional headings, uniform rhythm, and symbol artifacts. Role-agnostic. Derived from hardikpandya/stop-slop and iKora128/stop-ai-slop-jp (MIT).",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "snkrheadz"
       }
@@ -63,7 +54,7 @@
       "name": "spec",
       "source": "./spec",
       "description": "Spec-driven development pipeline (the Boris way): scan a repo for agent-readiness, then take a change from a one-line intent to a mergeable PR through human-gated phases — requirement (EARS) → design (DDD/clean-arch) → tasks → implement → review (isolated-context adversarial). Self-contained: bundles the implement phase and the audit rubric. Verification-first, one phase per command.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "snkrheadz"
       }
@@ -72,7 +63,7 @@
       "name": "craft",
       "source": "./craft",
       "description": "Quality-authoring pack: rubric before artifact, best-of-N candidates, fresh-eyes verify sweeps, and a taste gate, backed by 21 domain craft standards (design, motion, writing, code, research, prompting, product, data, security, ops, media, marketing, decisions, sales, teaching, management, storytelling, academic, career, translation, coordination). Derived from apoorvjain25/frontier (MIT).",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "author": {
         "name": "snkrheadz"
       }

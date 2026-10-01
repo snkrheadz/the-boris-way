@@ -40,18 +40,17 @@ coordinated multi-role → Team; wide fan-out + verify/synthesize → Workflow.
 - **Web fan-out is serial, not parallel.** Many concurrent `WebFetch` calls or parallel
   research subagents against one host trip CDN rate limits and bot detection, which
   slows the whole job. Launch web-research subagents one at a time; triage with
-  `WebSearch`, then fetch only a curated few; prefer typed channels (the `research`
-  pack's researchers) over raw scraping.
+  `WebSearch`, then fetch only a curated few.
 
 ### Model routing
 - Pin `model:` explicitly when delegating — subagents inherit the main-session model
-  otherwise, and on a Fable 5 session an untagged delegation buys top-tier reasoning
+  otherwise, and on a Fable session an untagged delegation buys top-tier reasoning
   (at top-tier cost) for work that doesn't need it.
 - **Security work routes to Opus 4.8.** Security audits, red-teaming, and
-  exploit-reproduction debugging can trip the cyber safety classifiers on Fable 5
-  *and* Opus 5 (`stop_reason: refusal`) even when benign — run them on Opus 4.8 by
-  switching the main session. A `model: "opus"` subagent resolves to Opus 5, which
-  carries the same classifiers, so it is no longer a safe route.
+  exploit-reproduction debugging can trip the safety classifiers on Fable 5.x *and*
+  the current Opus (`stop_reason: refusal`) even when benign — run them on Opus 4.8 by
+  switching the main session. A `model: "opus"` subagent resolves to the current Opus,
+  which carries the same classifiers, so it is not a safe route.
 - **Dispatch async, don't block.** Fire independent subtasks in the background and
   keep working; reuse a long-lived agent instead of respawning — context carries
   over and cache reads stay warm.

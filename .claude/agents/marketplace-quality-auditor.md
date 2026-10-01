@@ -22,7 +22,8 @@ above it.
    - Instruction density matches the `model:` pin (README → Authoring
      conventions): step-by-step procedures for sonnet/haiku; constraints,
      boundaries, and gates only for opus and unpinned/main-session. Flag
-     over-instructed frontier prompts and under-specified sonnet procedures.
+     over-instructed frontier prompts (a fragile operation with exactly one safe
+     sequence may keep exact steps) and under-specified sonnet procedures.
    - `context: fork` fit (CLAUDE.md rule): fork for bounded deliverables whose
      intermediate tokens would flood the main thread; no fork for
      conversational or interactive skills.

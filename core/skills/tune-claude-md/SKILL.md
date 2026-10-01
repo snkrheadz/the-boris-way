@@ -68,9 +68,9 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
    a procedure Claude executes (steps)?
      ├─ needs fan-out / multi-agent         → .claude/agents/<name>.md
      ├─ reusable in-context, no external dep → .claude/skills/<name>/SKILL.md
-     └─ otherwise                           → .claude/commands/<name>.md  (/project:<name>)
+     └─ otherwise                           → .claude/commands/<name>.md  (/<name>)
    reference knowledge (facts, not steps)   → .claude/context/<topic>.md  (@-mention, lazy)
-   learning that grows in-session           → tasks/lessons.md via #
+   learning that grows in-session           → tasks/lessons.md (ask Claude to record it)
    ```
 4. **reasons, not generalities.** A convention stays only if it carries its *reason*
    ("why we do it this way here"). A generic best practice with no repo-specific reason
@@ -104,7 +104,7 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
 
    | moved block | create |
    |---|---|
-   | repeated procedure | `.claude/commands/<name>.md` (kebab-case) → `/project:<name>` |
+   | repeated procedure | `.claude/commands/<name>.md` (kebab-case) → `/<name>` |
    | reusable in-context procedure | `.claude/skills/<name>/SKILL.md` |
    | fan-out / multi-agent procedure | `.claude/agents/<name>.md` |
    | reference detail | `.claude/context/<topic>.md` — first line a `<!-- read when: … -->` comment |
@@ -126,7 +126,7 @@ high-scoring-but-bloated CLAUDE.md gets fixed.
    ## Commands / Skills
    | name | trigger |
    |---|---|
-   | `/project:<name>` | <when> |
+   | `/<name>` | <when> |
    ```
 
 4. **Verify integrity before reporting:**
@@ -166,7 +166,7 @@ Size:  <before> → <after> lines
 - "<note>" → CLAUDE.local.md (machine-specific)
 
 ### Created (new artifacts, now discoverable from CLAUDE.md)
-- `.claude/commands/<name>.md` → `/project:<name>`
+- `.claude/commands/<name>.md` → `/<name>`
 - `.claude/context/<topic>.md` → `@`-referenced with a load trigger
 
 ### Reference integrity

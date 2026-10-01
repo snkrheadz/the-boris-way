@@ -19,7 +19,7 @@ exactly what break auto-selection or ship stale caches — so do every step.
 `$ARGUMENTS` is `<pack> <name> [model]`, e.g. `eng db-seed sonnet`.
 
 - **pack** — one of the dirs listed in `.claude-plugin/marketplace.json` (`core`, `pm`,
-  `eng`, `research`, `strategy`, `writing`, `spec`, `craft`).
+  `eng`, `strategy`, `writing`, `spec`, `craft`).
 - **name** — kebab-case; becomes the skill dir and the frontmatter `name:`.
 - **model** — optional; `haiku` / `sonnet` / `opus`. Default `sonnet`. Omit the pin
   only for a skill deliberately meant to run on the main session.
@@ -52,9 +52,9 @@ If arguments are missing, ask for them — don't guess the pack.
    # /<pack>:<name>
 
    <Body. Match the instruction density to the model pin: for sonnet/haiku write
-   explicit numbered steps; for an unpinned main-session skill write constraints,
+   explicit numbered steps; for an opus-pinned or unpinned main-session skill write constraints,
    boundaries and verification gates only — frontier models do worse when
-   over-instructed. Never instruct the skill to echo its internal reasoning.>
+   over-instructed (a fragile operation with one safe sequence keeps exact steps). Never instruct the skill to echo its internal reasoning.>
    ```
 
    The `description` is the autonomy surface — it is the only thing that auto-selects
@@ -66,8 +66,10 @@ If arguments are missing, ask for them — don't guess the pack.
    pack's entry in `.claude-plugin/marketplace.json`. Bump the patch level unless the
    user asks otherwise.
 
-6. **Update `README.md`** — add the skill to the pack's skill list and increment any
-   `Skills (N)` count for that pack.
+6. **Update every list that enumerates skills** — README's pack skill list and
+   `Skills (N)` count, the README repository-layout blurb, and the pack's `description`
+   in both `plugin.json` and `marketplace.json` (the same set `prune-redundant-skills`
+   repairs on removal).
 
 7. **Run the closing gate:** `bash scripts/validate.sh`. It must pass (the new skill's
    frontmatter, both version checks, and `claude plugin validate .`). Fix anything it

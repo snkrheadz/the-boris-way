@@ -51,4 +51,4 @@ status: ready
 
 When done, end with exactly:
 
-> 実装の準備完了: `/spec:implement specs/<id>/tasks.md` で実装し、`/eng:test-and-fix` で緑を確認、`/spec:review <id>` でレビュー、`/eng:create-pr` で PR を作成してください。並列でやるなら案件ごとに worktree を分けてください。
+> 実装の準備完了: `/spec:implement specs/<id>/tasks.md` で実装し、各タスクの「検証」を実行して緑を確認、`/spec:review <id>` でレビュー、`/eng:create-pr` で PR を作成してください。並列でやるなら案件ごとに worktree を分けてください。

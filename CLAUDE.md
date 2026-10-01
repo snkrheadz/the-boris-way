@@ -36,8 +36,8 @@ shared/CLAUDE.md                  # DISTRIBUTED philosophy (payload, not for thi
 scripts/validate.sh              # the gate
 ```
 
-Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `strategy` ·
-`writing` · `spec` · `craft`. README has the per-pack skill lists.
+Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `strategy` · `writing` ·
+`spec` · `craft`. README has the per-pack skill lists.
 
 ## Conventions (the *why* — mechanics are in README → Authoring conventions / Maintenance)
 
@@ -53,10 +53,10 @@ Packs: `core` (install-first, role-agnostic) · `pm` · `eng` · `research` · `
 - **`context: fork` runs the skill in an isolated subagent.** Add it when the skill goes
   off to produce a bounded deliverable or finding and returns a summary — work whose
   intermediate tokens (file reads, query output, test logs) would otherwise flood the
-  main thread (`db-query`, `techdebt`, `test-and-fix`, `html-output`).
+  main thread (`verify-work`, `craft:produce`).
   Omit it when the skill's output *is* the conversational answer or it needs the live
   session / user back-and-forth — the reasoning family (`deep-thinking`,
-  `honest-reasoning`, `first-principles`, `life-decision`) and interactive/sequential
+  `honest-reasoning`, `life-decision`) and interactive/sequential
   skills (`create-pr`, `review-inbox`, the spec phases). When unsure, omit — main-session
   is the safe default.
 - **Bump the version in BOTH** the pack's `plugin.json` and its `marketplace.json`
@@ -96,5 +96,6 @@ Recurring upkeep is a team pass, not a hand-prompt: `/maintain-marketplace` runs
 `philosophy-gap-analyst` · `marketplace-quality-auditor` · `marketplace-ops-manager`
 (`.claude/agents/`, not distributed) — mechanics live in the skill itself. Run it
 weekly or after a Claude Code release, or schedule it as a routine. The standing
-rule: changes to `shared/CLAUDE.md` are always proposed, never auto-applied.
+rule: changes to `shared/CLAUDE.md` or the authoring conventions are always proposed,
+never auto-applied.
 
